@@ -3,28 +3,11 @@ var express = require('express');
 var routes = function(Exhibit){
 
   var exhibitRouter = express.Router();
+
+  var exhibitController = require('../controllers/exhibit.server.controller.js')(Exhibit);
   exhibitRouter.route('/')
-      .post(function(req,res){
-
-        var exhibit = new Exhibit(req.body);
-        exhibit.save();
-        console.log(exhibit);
-        res.status(201).send(exhibit);
-
-      })
-      .get(function(req,res){
-          var query = {};
-          if(req.query.title){
-            query.title = req.query.title;
-          }
-
-          Exhibit.find(query,function(err,exhibits){
-            if (err)
-            res.status(500).send(err);
-            else
-              res.json(exhibits);
-          });
-      });
+      .post(exhibitController.post)
+      .get(exhibitController.get);
 
   exhibitRouter.use('/:title/:language', function(req,res,next){
       Exhibit.findOne({

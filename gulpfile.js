@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
-  nodemon = require('gulp-nodemon');
+  nodemon = require('gulp-nodemon'),
+  gulpMocha = require('gulp-mocha');
 
 gulp.task('default', function(){
   nodemon({
@@ -14,3 +15,9 @@ gulp.task('default', function(){
     console.log('restarting');
   })
 });
+
+gulp.task('test', function(){
+  console.log("here");
+  gulp.src('tests/*.js' , {read:false})
+      .pipe(gulpMocha({reporter: 'nyan'}))
+})
