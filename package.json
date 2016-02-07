@@ -15,7 +15,13 @@
     "gulp-mocha": "^2.2.0",
     "gulp-nodemon": "^2.0.6",
     "mongoose": "^4.4.0",
+    "multer": "^0.1.6",
     "should": "^8.2.1",
-    "sinon": "^1.17.3"
+    "sinon": "^1.17.3",
+    "multer": "1.1.0"
+  },
+  "devDependencies": {
+    "gulp-env": "^0.4.0",
+    "supertest": "^1.1.0"
   }
 }

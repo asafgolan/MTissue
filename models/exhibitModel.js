@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
+var collectionName = 'exhibits';
 
 var exhibitModel = new Schema({
     title: {type: String},
@@ -7,4 +8,4 @@ var exhibitModel = new Schema({
     content: {type: String}
 });
 
-module.exports= mongoose.model('Exhibit', exhibitModel);
+module.exports= mongoose.model('Exhibit', exhibitModel, collectionName);
