@@ -9,8 +9,8 @@ var express = require('express'),
 //else {
 var  db = mongoose.connect('mongodb://admin:admin@ds055525.mongolab.com:55525/museo');
 //}
-var Exhibit = require('./models/exhibitModel');
-var QrExhibit = require('./models/qr_exhibitModel');
+var Exhibit = require('./models/exhibit.model');
+//var QrExhibit = require('./models/qr_exhibitModel');
 
 var app = express();
 
@@ -48,7 +48,7 @@ app.post('/api/photo',function(req,res){
 
 
 
-exhibitRouter = require('./Routes/exhibitRoutes')(Exhibit, QrExhibit);
+exhibitRouter = require('./Routes/exhibit.routes')(Exhibit/** ,QrExhibit**/);
 
 app.use('/api/exhibits', exhibitRouter);
 

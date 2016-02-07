@@ -1,6 +1,6 @@
 var express = require('express');
 
-var routes = function(Exhibit,QrExhibit){
+var routes = function(Exhibit/**,QrExhibit**/){
 
   var exhibitRouter = express.Router();
 
@@ -15,7 +15,7 @@ upload files
  /**
  API URL
 api/exhibits/qr_exhibits
- **/
+
   exhibitRouter.route('/qr_exhibits')
     .get(function(req,res){
       var query = {};
@@ -43,7 +43,7 @@ api/exhibits/qr_exhibits
       }
     });
   });
-
+**/
   /**
   API URL
   api/exhibits/
@@ -53,10 +53,9 @@ api/exhibits/qr_exhibits
       .post(exhibitController.post)
       .get(exhibitController.get);
 
-  exhibitRouter.use('/:title/:language', function(req,res,next){
+  exhibitRouter.use('/:title', function(req,res,next){
       Exhibit.findOne({
-        title: req.params.title,
-        language: req.params.language
+        title: req.params.title
       },function(err,exhibit){
         if (err)
           res.status(500).send(err);
@@ -70,13 +69,14 @@ api/exhibits/qr_exhibits
       });
   });
 
-  exhibitRouter.route('/:title/:language')
+  exhibitRouter.route('/:title')
   //exhibitRouter.route('/:exhibitId')
   .get(function(req,res){
       res.json(req.exhibit);
   })
-  //put update only the content
+  //put changes qrUrl and Content
   .put(function(req,res){
+        req.exhibit.qrUrl = req.body.qrUrl;
         req.exhibit.content = req.body.content;
         req.exhibit.save(function(err){
           if (err)
@@ -86,7 +86,9 @@ api/exhibits/qr_exhibits
         }
     });
   })
+  //maybe dont have to use the Patch
   .patch(function(req,res){
+
     if(req.body._id)
       delete req.body._id
     for(var p in req.body){
