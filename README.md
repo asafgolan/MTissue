@@ -3,7 +3,7 @@
 
 ## Installation
 1.pull this repository<br />
-2.run npm install to instal dependencies<br />
+2.run npm install to install dependencies<br />
 3.run project command is : gulp<br />
 ## Usage
 ###routes
