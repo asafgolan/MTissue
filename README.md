@@ -1,23 +1,94 @@
-<snippet>
-  <content><![CDATA[
-# ${1:museoAPI}
-TODO: Write a project description
+
+# museoAPI
+
 ## Installation
-TODO: Describe the installation process
+1.pull this repository<br />
+2.run npm install to instal dependencies<br />
+3.run project command is : gulp<br />
 ## Usage
-TODO: Write usage instructions
-## Contributing
-1. Fork it!
-2. Create your feature branch: `git checkout -b my-new-feature`
-3. Commit your changes: `git commit -am 'Add some feature'`
-4. Push to the branch: `git push origin my-new-feature`
-5. Submit a pull request :D
-## History
-TODO: Write history
-## Credits
-TODO: Write credits
-## License
-TODO: Write license
-]]></content>
-  <tabTrigger>readme</tabTrigger>
-</snippet>
+###routes
+####HTTP.GET <br />
+`http://localhost:8000/api/exhibits/`
+
+HTTP respone an Array of JSON objects:
+
+    [{
+      "_id": "56c2efb5dc703d601d4487c3",
+      "title": "villeschema",
+    "__v": 0,
+    "content": [
+      {
+        "language": "MADE UP LANGUAGE",
+        "description": "huinaa",
+        "_id": "56c2efb5dc703d601d4487c6"
+      },
+      {
+        "title": "qrurl",
+        "url": "vileeurl",
+        "_id": "56c2efb5dc703d601d4487c5"
+      },
+      {
+        "title": "villevideo",
+        "url": "vilevideourl",
+        "_id": "56c2efb5dc703d601d4487c4"
+      }]
+
+####HTTP.POST <br />
+
+`http://localhost:8000/api/exhibits/`
+
+HTTP req a body JSON:
+
+    {
+      "title": "villeschema",
+      "content": [
+          {
+            "language": "MADE UP LANGUAGE",
+            "description": "huinaa"
+          },
+          {
+            "title":"qrurl",
+            "url":"vileeurl"
+          },
+          {
+            "title":"villevideo",
+            "url":"vilevideourl"
+          }
+        ]
+    }    
+
+##### respone <br />
+
+      {
+      "title": "villeschema",
+          "_id": "56d8bbbf263101b47e0ee6c2",
+          "content": 
+          [
+            {
+              "language": "MADE UP LANGUAGE",
+              "description": "huinaa",
+              "_id": "56d8bbbf263101b47e0ee6c5"
+            },
+            {
+              "title": "qrurl",
+              "url": "vileeurl",
+              "_id": "56d8bbbf263101b47e0ee6c4"
+            },
+            {
+              "title": "villevideo",
+              "url": "vilevideourl",
+              "_id": "56d8bbbf263101b47e0ee6c3"
+            }
+          ]
+      }    
+
+####HTTP.DELETE <br />
+deletes by title<br/>
+`http://localhost:8000/api/exhibits/villeschema`
+
+####HTTP.PUT <br />
+send JSON same as in POST with title of existing object.  
+<br/>
+It will REPLACE the current object BEWARE.
+
+`http://localhost:8000/api/exhibits/villeschema`
