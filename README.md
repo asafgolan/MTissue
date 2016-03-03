@@ -92,3 +92,8 @@ send JSON same as in POST with title of existing object.
 It will REPLACE the current object BEWARE.
 
 `http://localhost:8000/api/exhibits/villeschema`
+
+####upload file
+
+`http://localhost:8000/api/exhibits/villeschema`
+
