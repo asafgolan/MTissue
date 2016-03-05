@@ -4,10 +4,11 @@ var collectionName = 'exhibits';
 
 var exhibitModel = new Schema({
     title: {type: String},
-    qrUrl:{type: String},
     content:[{
+      title: {type: String},
       language: {type: String},
-      description: {type: String}
+      description: {type: String},
+      url: {type: String}
     }]
 });
 

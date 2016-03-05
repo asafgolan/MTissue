@@ -3,22 +3,36 @@ var should = require('should'),
     app = ('../app.js'),
     mongoose = require('mongoose'),
     //Exhibit = mongoose.model('Exhibit');
-    Exhibit = require('../models/exhibitModel'),
+    Exhibit = require('../models/exhibit.model'),
     agent = request.agent(app);
+
 
     describe('Exhibit CRUD Test', function(){
       it('should post an exhibit and return title and _id', function(done){
         var exhibitPost = {
-          title:'new exhibit',
-          language: 'new language',
-          content: 'new content'
+          "title": "TEST",
+          "content": [
+            {
+              "language": "MADE UP LANGUAGE",
+              "description": "huinaa"
+            },
+            {
+              "title":"qrurl",
+              "url":"vileeurl"
+            },
+            {
+              "title":"villevideo",
+              "url":"vilevideourl"
+            }
+          ]
         }
+
         console.log(exhibitPost);
         agent.post('/api/exhibits')
           .send(exhibitPost)
           .expect(200)
           .end(function(err, results){
-            console.log(err);
+            console.log(results);
             //results.body.title.should.equal('new exhibit');
             results.body.should.have.property('_id');
             done()
@@ -29,6 +43,27 @@ var should = require('should'),
         done();
       })
     })
+
+/**
+        describe('GET REQ TO EXHIBITS', function(){
+          it('should get an exhibits', function(done){
+
+            agent.get('/api/exhibits')
+              //.send(exhibitPost)
+              .expect(200)
+              .end(function(err, results){
+                console.log(results);
+                //results.body.title.should.equal('new exhibit');
+                results.body.should.have.property('_id');
+                done()
+              })
+          })
+          afterEach(function(done){
+            Exhibit.remove().exec();
+            done();
+          })
+        })
+        **/
 
 /**var should = require('should'),
         request = require('supertest'),
