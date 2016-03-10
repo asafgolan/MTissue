@@ -5,49 +5,7 @@ var routes = function(Exhibit/**,QrExhibit**/){
   var exhibitRouter = express.Router();
 
   var exhibitController = require('../controllers/exhibit.server.controller.js')(Exhibit);
-  /**
-upload files
-  api/exhibits/qr_exhibits
-  **/
 
-
-
- /**
- API URL
-api/exhibits/qr_exhibits
-
-  exhibitRouter.route('/qr_exhibits')
-    .get(function(req,res){
-      var query = {};
-      if(req.query.title){
-        query.title = req.query.title;
-      }
-      QrExhibit.find(query ,function(err, qrs){
-        if(err){
-        res.status(500).send(err);
-        }else{
-          res.json(qrs);
-        }
-      });
-    });
-
-  exhibitRouter.route('/qr_exhibits/:title')
-  .get(function(req,res){
-    QrExhibit.findOne({
-      title: req.params.title,
-    },function(err, qrs){
-      if(err){
-        res.status(500).send(err);
-      }else{
-        res.json(qrs);
-      }
-    });
-  });
-**/
-  /**
-  API URL
-  api/exhibits/
-  **/
 
   exhibitRouter.route('/')
       .post(exhibitController.post)

@@ -18,7 +18,6 @@ var port = process.env.PORT || 3000;
 app.use(express.static('uploads'));
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
-
 var storage	=	multer.diskStorage({
   destination: function (req, file, callback) {
     //console.log(file.mimetype);
@@ -30,12 +29,12 @@ var storage	=	multer.diskStorage({
   }
 });
 var upload = multer({ storage : storage }).array('userPhoto',2);
-
-app.get('/',function(req,res){
+/**
+app.get('/uploads',function(req,res){
       res.sendFile(__dirname + "/index.html");
 });
 
-app.post('/api/photo',function(req,res){
+app.post('/uploads',function(req,res){
 	upload(req,res,function(err) {
 	   console.log(req.files);
 		//console.log(req);
@@ -46,10 +45,12 @@ app.post('/api/photo',function(req,res){
 	});
 });
 
-
-
+**/
+uploadRouter = require('./Routes/upload.routes.js')(upload);
 exhibitRouter = require('./Routes/exhibit.routes')(Exhibit/** ,QrExhibit**/);
 
+
+app.use('/uploads', uploadRouter);
 app.use('/api/exhibits', exhibitRouter);
 
 
