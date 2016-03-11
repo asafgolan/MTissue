@@ -1,6 +1,11 @@
 
 # museoAPI
 
+##backend connection
+in app.js file replace config.DBPath with wanted mongoDB path 
+`var  db = mongoose.connect(config.DBPath);`
+
+
 ## Installation
 1.pull this repository<br />
 2.run npm install to install dependencies<br />
