@@ -1,11 +1,8 @@
 var express = require('express');
 
-var routes = function(Exhibit/**,QrExhibit**/){
-
+var routes = function(Exhibit){
   var exhibitRouter = express.Router();
-
   var exhibitController = require('../controllers/exhibit.server.controller.js')(Exhibit);
-
 
   exhibitRouter.route('/')
       .post(exhibitController.post)

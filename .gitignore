@@ -25,7 +25,8 @@ build/Release
 
 # Dependency directory
 node_modules
-uploaods
+uploads
+config
 
 
 # Optional npm cache directory

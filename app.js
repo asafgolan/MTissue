@@ -1,16 +1,16 @@
 var express = require('express'),
     mongoose = require('mongoose'),
     bodyParser = require('body-parser'),
-    multer  =   require('multer');
-
+    multer  =   require('multer'),
+    config = require('./config.json');
 //var db;
 //if(process.env.ENV == 'Test')
-//db = mongoose.connect('mongodb://admin:admin@ds063892.mongolab.com:63892/museo_test');
+//db = mongoose.connect(config.TestDBPath);
 //else {
-var  db = mongoose.connect('mongodb://admin:admin@ds055525.mongolab.com:55525/museo');
+
+var  db = mongoose.connect(config.DBPath);
 //}
 var Exhibit = require('./models/exhibit.model');
-//var QrExhibit = require('./models/qr_exhibitModel');
 
 var app = express();
 
@@ -20,8 +20,6 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 var storage	=	multer.diskStorage({
   destination: function (req, file, callback) {
-    //console.log(file.mimetype);
-
     callback(null, './uploads/');
   },
   filename: function (req, file, callback) {
@@ -29,26 +27,9 @@ var storage	=	multer.diskStorage({
   }
 });
 var upload = multer({ storage : storage }).array('userPhoto',2);
-/**
-app.get('/uploads',function(req,res){
-      res.sendFile(__dirname + "/index.html");
-});
 
-app.post('/uploads',function(req,res){
-	upload(req,res,function(err) {
-	   console.log(req.files);
-		//console.log(req);
-		if(err) {
-			return res.end("Error uploading filessssss.");
-		}
-    res.json(req.files);
-	});
-});
-
-**/
 uploadRouter = require('./Routes/upload.routes.js')(upload);
-exhibitRouter = require('./Routes/exhibit.routes')(Exhibit/** ,QrExhibit**/);
-
+exhibitRouter = require('./Routes/exhibit.routes')(Exhibit);
 
 app.use('/uploads', uploadRouter);
 app.use('/api/exhibits', exhibitRouter);

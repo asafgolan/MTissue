@@ -1,0 +1,4 @@
+{
+"DBPath":"mongodb://admin:admin@ds055525.mongolab.com:55525/museo",
+"TestDBPath": "mongodb://admin:admin@ds063892.mongolab.com:63892/museo_test"
+}

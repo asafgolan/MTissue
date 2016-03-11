@@ -12,6 +12,11 @@ var uploadController = function(upload){
       res.json(req.files);
     })
   }
+
+     return {
+       post: post,
+       get: get
+     }
 }
 
 module.exports = uploadController;
