@@ -1,16 +1,18 @@
 var express = require('express');
+var passport = require('passport');
 
 var routes = function(Exhibit){
   var exhibitRouter = express.Router();
+  var authController = require('../controllers/auth.js');
   var exhibitController = require('../controllers/exhibit.server.controller.js')(Exhibit);
 
   exhibitRouter.route('/')
-      .post(exhibitController.post)
+      .post(authController.isAuthenticated, exhibitController.post)
       .get(exhibitController.get);
 
-  exhibitRouter.use('/:title', function(req,res,next){
+  exhibitRouter.use('/:id', function(req,res,next){
       Exhibit.findOne({
-        title: req.params.title
+        _id: req.params.id
       },function(err,exhibit){
         if (err)
           res.status(500).send(err);
@@ -24,14 +26,15 @@ var routes = function(Exhibit){
       });
   });
 
-  exhibitRouter.route('/:title')
+  exhibitRouter.route('/:id')
   //exhibitRouter.route('/:exhibitId')
   .get(function(req,res){
       res.json(req.exhibit);
   })
   //put changes qrUrl and Content
-  .put(function(req,res){
-        req.exhibit.qrUrl = req.body.qrUrl;
+  .put(authController.isAuthenticated, function(req,res){
+        //req.exhibit= req.body;
+        req.exhibit.title = req.body.title;
         req.exhibit.content = req.body.content;
         req.exhibit.save(function(err){
           if (err)
@@ -42,7 +45,7 @@ var routes = function(Exhibit){
     });
   })
   //maybe dont have to use the Patch
-  .patch(function(req,res){
+  .patch(authController.isAuthenticated, function(req,res){
 
     if(req.body._id)
       delete req.body._id
@@ -57,7 +60,7 @@ var routes = function(Exhibit){
       }
     });
   })
-  .delete(function(req, res){
+  .delete(authController.isAuthenticated, function(req, res){
     req.exhibit.remove(function(err){
       if(err)
         res.status(500).send(err);

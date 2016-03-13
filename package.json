@@ -9,16 +9,23 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.14.2",
     "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "google-oauth": "0.0.2",
     "gulp": "^3.9.0",
     "gulp-mocha": "^2.2.0",
     "gulp-nodemon": "^2.0.6",
+    "jsonwebtoken": "^5.7.0",
     "mongoose": "^4.4.0",
-    "multer": "^0.1.6",
+    "morgan": "^1.7.0",
+    "multer": "1.1.0",
+    "passport": "^0.3.2",
+    "passport-google-oauth": "^1.0.0",
+    "passport-http": "^0.3.0",
     "should": "^8.2.1",
-    "sinon": "^1.17.3",
-    "multer": "1.1.0"
+    "sinon": "^1.17.3"
   },
   "devDependencies": {
     "gulp-env": "^0.4.0",
