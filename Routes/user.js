@@ -1,20 +1,19 @@
 
 var express = require('express');
 var passport = require('passport');
-
+var jwt = require('jsonwebtoken');
+require('../controllers/passport')(passport);
 
 var routes = function(User){
 
   var userRouter = express.Router();
-  var isLogged = require('../controllers/isLogged.js');
   var userController = require('../controllers/user')(User);
-  var authController = require('../controllers/auth');
 
 
 console.log("FUCK U DOLPHIN");
   userRouter.route('/')
-    .post(authController.isAuthenticated, userController.post)
-    .get(authController.isAuthenticated, userController.get);
+    .post(passport.authenticate('jwt', { session: false}), userController.post)
+    .get(passport.authenticate('jwt', { session: false}), userController.get);
 
     return userRouter;
 }

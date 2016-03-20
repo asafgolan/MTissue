@@ -3,10 +3,10 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     multer  =   require('multer'),
     logger = require('morgan'),
-    jsonwebtoken = require('jsonwebtoken'),
+    jwt = require('jsonwebtoken'),
     passport = require('passport'),
     config = require('./config.json');
-    var jwt  = require('jwt-simple');
+    //var jwt  = require('jwt-simple');
 
 //var db;
 //if(process.env.ENV == 'Test')
@@ -16,7 +16,7 @@ var  db = mongoose.connect(config.DBPath);
 //}
 var Exhibit = require('./models/exhibit.model');
 var User = require('./models/user');
-var authController = require('./controllers/auth');
+require('./controllers/passport')(passport);
 
 var app = express();
 app.set('superSecret', config.secret);
@@ -39,35 +39,34 @@ var storage	=	multer.diskStorage({
 var upload = multer({ storage : storage }).array('userPhoto',2);
 
 uploadRouter = require('./Routes/upload.routes.js')(upload);
-//exhibitRouter = require('./Routes/exhibit.routes')(Exhibit);
-//userRouter = require('./Routes/user')(User);
+exhibitRouter = require('./Routes/exhibit.routes')(Exhibit);
+userRouter = require('./Routes/user')(User);
 app.use(express.static(__dirname + '/static'));
 
 app.use('/static', express.static(__dirname + '/static'));
-app.use('/api/uploads',uploadRouter);
-//app.use('/api/exhibits', exhibitRouter);
-//app.use('/api/users', userRouter);
+app.use('/api/uploads', passport.authenticate('jwt', { session: false}) ,uploadRouter);
+app.use('/api/exhibits', exhibitRouter);
+app.use('/api/users', userRouter);
 
-app.post('/authenticatce',authController.isAuthenticated , function(req, res) {
-
-
+app.post('/authenticate', function(req, res) {
   User.findOne({
-    name: req.body.name
+    email: req.body.email
   }, function(err, user) {
     if (err) throw err;
 
     if (!user) {
-      res.send({success: false, msg: 'Authentication failed. User not found.'});
+      res.send({ success: false, message: 'Authentication failed. User not found.' });
     } else {
-      // check if password matches
-      user.verifyPassword(req.body.password, function (err, isMatch) {
+      // Check if password matches
+      user.verifyPassword(req.body.password, function(err, isMatch) {
         if (isMatch && !err) {
-          // if user is found and password is right create a token
-          var token = jwt.encode(user, config.secret);
-          // return the information including token as JSON
-          res.json({success: true, token: 'JWT ' + token});
+          // Create token if the password matched and no error was thrown
+          var token = jwt.sign(user, config.secret, {
+            expiresIn: 10080 // in seconds
+          });
+          res.json({ success: true, token: 'JWT ' + token });
         } else {
-          res.send({success: false, msg: 'Authentication failed. Wrong password.'});
+          res.send({ success: false, message: 'Authentication failed. Passwords did not match.' });
         }
       });
     }
