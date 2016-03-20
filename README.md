@@ -7,11 +7,6 @@ in app.js file replace config.DBPath with wanted mongoDB path:
 set supersecret to whatever string:
 `app.set('superSecret', config.secret);`
 
-localhost:8000/api/authenticate
-localhost:8000/api/uploads
-localhost:8000/api/exhibits
-localhost:8000/api/users
-
 
 ## Installation
 1.pull this repository<br />
@@ -31,7 +26,7 @@ HTTP respone
   "token": "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9... SOME LONG TOKEN ........"
 }
 ```
-return Authorization token. required for all route besides `http://localhost:8000/api/exhibits/`
+return Authorization token. required for all route besides GET `http://localhost:8000/api/exhibits/`
 
 ####HTTP.GET <br />
 
