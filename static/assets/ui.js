@@ -9,16 +9,19 @@ var pms = angular.module('qrms', ['ui.router'])
     $urlRouterProvider.otherwise("/");
 
     $stateProvider
-      .state('login', {
+    .state('login', {
 
-        url: '/',
-        params: {
-          error: null,
-        },
-        templateUrl: 'views/login.html',
-        controller: 'LoginCtrl'
+      url: '/',
+      templateUrl: 'views/login.html',
+      controller: 'LoginCtrl'
 
-      });
+    }).state('list', {
+
+      url: '/list',
+      templateUrl: 'views/list.html',
+      controller: 'ListCtrl'
+
+    });
 
     //no hashbang
     $locationProvider.html5Mode(true);
@@ -29,27 +32,43 @@ var pms = angular.module('qrms', ['ui.router'])
 
   $scope = $rootScope;
 
-  $rootScope.authHeader = "";
+
+}])
+
+.controller('LoginCtrl', ['$scope', '$rootScope', '$state', '$http', 'restcli', function($scope, $rootScope, $state, $http, restcli) {
+
+  $scope.username = "";
+  $scope.password = "";
+
+  $scope.authenticate = function(){
+    restcli.auth($scope.username, $scope.password).success(function(data, status){
+      $http.defaults.headers.common.Authorization = data.token;
+      $scope.authMessage = "Logged in as "+$scope.username;
+      $state.go("list");
+    }).error(function(data, status){
+      $scope.authMessage = "Invalid credentials.";
+    });
+  }
 
 
 }])
 
-.controller('LoginCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
 
-  $scope.username = "asaf";
-  $scope.password = "golan";
+.controller('ListCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
 
-  restcli.auth($scope.username, $scope.password).success(function(data, status){
-    $rootScope.authHeader = 'Basic '+ btoa(username+":"+password);
+  restcli.getUsers().success(function(data, status){
+    console.log(data);
   });
 
 }])
 
 .factory('restcli', ['$http', '$q', function($http, $q){
   return {
-  	  login: function(username, password) {
-          $http.defaults.headers.common['Authorization'] = 'Basic '+ btoa(username+":"+password);
-  		    return $http.get('/api/exhibits', {cache: false});
+  	  auth: function(username, password) {
+  		    return $http.post('/api/authenticate', {username: username, password: password});
+  	  },
+      getUsers: function() {
+  		    return $http.get('/api/users');
   	  }
     }
 
