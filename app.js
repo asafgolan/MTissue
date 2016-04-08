@@ -2,17 +2,14 @@ var express = require('express'),
   mongoose = require('mongoose'),
   bodyParser = require('body-parser'),
   multer = require('multer'),
-  logger = require('morgan'),
   jwt = require('jsonwebtoken'),
   passport = require('passport'),
   config = require('./config.json');
-//rediss = require('./config/redissSetup.js');
-var redis = require('redis');
-var client = redis.createClient(6379, '127.0.0.1');
+//var client = redis.createClient(6379, '127.0.0.1');
 //var jwt  = require('jwt-simple');
-client.on('error', function(error) {
-  console.log("Error While creating the Socket Connection");
-});
+//client.on('error', function(error) {
+//  console.log("Error While creating the Socket Connection");
+//});
 
 //var db;
 //if(process.env.ENV == 'Test')
@@ -82,10 +79,11 @@ app.post('/api/authenticate', function(req, res) {
           var token = jwt.sign(user, config.secret, {
             expiresIn: 10080 // in seconds
           });
-          client.set('AuthToken', 'JWT ' + token, redis.print);
+          //client.set('AuthToken', 'JWT ' + token, redis.print);
 
           //Now Get teh Value
 
+          /*
           client.get('vege',function(error,value)
           {
           if(error)
@@ -93,9 +91,8 @@ app.post('/api/authenticate', function(req, res) {
           throw error;
           }
           console.log('The vegetable is = '+ value);
-
           });
-
+          */
 
           res.json({
             success: true,

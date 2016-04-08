@@ -4,7 +4,7 @@ var express = require('express'),
 
 var routes = function(upload){
   var uploadRouter = express.Router();
-var uploadController = require('/Users/asafgolan/museoAPI/museoAPI/controllers/uploads.server.controller.js')(upload);
+var uploadController = require('../controllers/uploads.server.controller.js')(upload);
 
 
   uploadRouter.route('/')

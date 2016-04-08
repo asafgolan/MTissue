@@ -21,17 +21,28 @@ var pms = angular.module('qrms', ['ui.router'])
       templateUrl: 'views/list.html',
       controller: 'ListCtrl'
 
-    });
+    }).state('edit', {
 
-    //no hashbang
-    $locationProvider.html5Mode(true);
+      url: '/edit/:id',
+      templateUrl: 'views/edit.html',
+      controller: 'EditCtrl'
+
+    }).state('view', {
+
+      url: '/view/:id',
+      templateUrl: 'views/view.html',
+      controller: 'ViewCtrl'
+
+    });
+    
+    $locationProvider.html5Mode(false);
 
 }])
 
 .controller('RootCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli){ //base controller
 
   $scope = $rootScope;
-
+  $rootScope.contentTypes = {1: "Text", 2: "File", 3: "URL"};
 
 }])
 
@@ -56,8 +67,31 @@ var pms = angular.module('qrms', ['ui.router'])
 
 .controller('ListCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
 
-  restcli.getUsers().success(function(data, status){
+  $rootScope.exhibits;
+  
+  restcli.getExhibits().success(function(data, status){
     console.log(data);
+    $rootScope.exhibits = data;
+  });
+
+}])
+
+.controller('EditCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
+
+  $scope.exhibit;
+  
+  restcli.getExhibit($state.params.id).success(function(data, status){
+    $scope.exhibit = data;console.log(data);
+  });
+
+}])
+
+.controller('ViewCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
+
+  $scope.exhibit;
+  
+  restcli.getExhibit($state.params.id).success(function(data, status){
+    $scope.exhibit = data;
   });
 
 }])
@@ -69,6 +103,12 @@ var pms = angular.module('qrms', ['ui.router'])
   	  },
       getUsers: function() {
   		    return $http.get('/api/users');
+  	  },
+  	  getExhibits: function(){
+  	      return $http.get('/api/exhibits')
+  	  },
+  	  getExhibit: function(id){
+  	      return $http.get('/api/exhibits/'+id)
   	  }
     }
 
