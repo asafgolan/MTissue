@@ -10,7 +10,9 @@
         <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.js'></script>
         <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'></script>
 
+        <script type='text/javascript' src='assets/qrcode.js'></script>
         <script type='text/javascript' src='assets/ui.js'></script>
+        <link rel="stylesheet" type="text/css" href="assets/style.css">
 
         <base href="/">
         <title>QR management system</title>
@@ -20,7 +22,7 @@
 
     <body ng-app="qrms">
 
-        <header ng-controller="RootCtrl"></header>
+        <header ng-controller="RootCtrl" class="no-print"><div class="wrap" ng-if="loggedIn"><p>Logged in as {{currentUser}}</p></div></header>
 
         <div ui-view>
 
