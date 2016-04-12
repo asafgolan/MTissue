@@ -34,7 +34,7 @@ app.use(passport.initialize());
 
 var storage = multer.diskStorage({
   destination: function(req, file, callback) {
-    callback(null, './uploads/');
+    callback(null, './static/uploads');
   },
   filename: function(req, file, callback) {
     callback(null, file.originalname + '-' + Date.now());
