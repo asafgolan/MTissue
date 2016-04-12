@@ -134,7 +134,7 @@ var pms = angular.module('qrms', ['ui.router'])
         console.log(data);
       } else {
         var targetIdx = _.findLastIndex($scope.exhibit.content, {_id: $scope.uploadTarget});
-        $scope.exhibit.content[targetIdx].url = "uploads/"+data[0].originalname;
+        $scope.exhibit.content[targetIdx].url = "uploads/"+data[0].filename;
       }
 
   }

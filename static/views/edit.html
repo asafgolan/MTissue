@@ -12,8 +12,11 @@
               {{typeName}}
             </option>
         </select><br>
-        <div ng-if="piece.type==3"><label>URL </label><input type="text" ng-model="piece.url"></div>
-        <div ng-if="piece.type==2">{{piece.url}} <input type="file" file-model="piece.newFile"/><button ng-click="upload(piece._id)">asd</button></div>
+        <div ng-if="piece.type==2">
+            <label>Select file</label><input type="file" file-model="piece.newFile"/><button ng-click="upload(piece._id)">Upload</button><br>
+            <label>Current file</label><span>{{piece.url}}</span>
+        </div>
+        <div ng-if="piece.type==3"><label>URL </label><input type="text" ng-model="piece.url" placeholder="http://"></div>
         <textarea ng-model="piece.description"></textarea>
     </div>
     
