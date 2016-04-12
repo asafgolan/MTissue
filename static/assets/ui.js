@@ -115,6 +115,29 @@ var pms = angular.module('qrms', ['ui.router'])
   $scope.saveExhibit = function(){
     $rootScope.saveExhibit($scope.exhibit);
   }
+  
+  $scope.uploadTarget;
+  
+  $scope.newFile;
+  $scope.upload = function(id) {
+      $scope.uploadTarget = id;
+      var fd = new FormData();
+      var targetIdx = _.findLastIndex($scope.exhibit.content, {_id: $scope.uploadTarget});
+      var newFile = $scope.exhibit.content[targetIdx].newFile;
+      fd.append("userPhoto", newFile);
+      restcli.upload(fd).then(uploadHandler, uploadHandler);
+  }
+
+  var uploadHandler = function(data, status) {
+
+      if (data["error"]) {
+        console.log(data);
+      } else {
+        var targetIdx = _.findLastIndex($scope.exhibit.content, {_id: $scope.uploadTarget});
+        $scope.exhibit.content[targetIdx].url = "uploads/"+data[0].originalname;
+      }
+
+  }
 
 }])
 
@@ -159,9 +182,66 @@ var pms = angular.module('qrms', ['ui.router'])
   	      return $http.get('/api/exhibits/'+id)
   	  },
   	  setExhibit: function(data){
-  	      console.log(data);
   	      return $http.put('/api/exhibits/'+data._id, data)
+  	  },
+  	  upload: function(data){
+
+            var deferred = $q.defer();
+            var getProgressListener = function(deferred) {
+                return function(event) {
+                    //do some magic
+                    var progpercent = ((100 * (event.loaded / event.total)).toFixed()) + "%";
+                };
+            };
+
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/uploads',
+                data: data,
+                cache: false,
+                // Force this to be read from FormData
+                contentType: false,
+                processData: false,
+                success: function(response, textStatus, jqXHR) {
+                    deferred.resolve(response);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    deferred.reject(errorThrown);
+                },
+                xhr: function() {
+                    var myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) {
+                        myXhr.upload.addEventListener(
+                            'progress', getProgressListener(deferred), false);
+                    } else {
+                        console.log('Upload progress is not supported.');
+                    }
+                    return myXhr;
+                },
+                beforeSend: function(xhr){
+                  xhr.setRequestHeader("Authorization", $http.defaults.headers.common.Authorization);
+                }
+            });
+            return deferred.promise;
+
   	  }
     }
 
+}])
+
+.directive('fileModel', ['$parse', function($parse) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attrs) {
+            var model = $parse(attrs.fileModel);
+            var modelSetter = model.assign;
+
+            element.bind('change', function() {
+                scope.$apply(function() {
+                    modelSetter(scope, element[0].files[0]);
+                });
+            });
+        }
+    };
 }]);

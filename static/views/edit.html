@@ -13,7 +13,7 @@
             </option>
         </select><br>
         <div ng-if="piece.type==3"><label>URL </label><input type="text" ng-model="piece.url"></div>
-        <div ng-if="piece.type==2"><p>No file handling here yet :( but URL is: "{{piece.url}}"</p></div>
+        <div ng-if="piece.type==2">{{piece.url}} <input type="file" file-model="piece.newFile"/><button ng-click="upload(piece._id)">asd</button></div>
         <textarea ng-model="piece.description"></textarea>
     </div>
     

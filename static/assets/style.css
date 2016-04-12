@@ -75,6 +75,10 @@ header{
     background-color:ghostwhite;
 }
 
+img{
+    max-width:100%;
+}
+
 hr{
     margin:1em 0;
     height:0;
