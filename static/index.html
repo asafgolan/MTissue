@@ -11,6 +11,7 @@
         <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'></script>
 
         <script type='text/javascript' src='assets/qrcode.js'></script>
+        <script type='text/javascript' src='assets/underscore.js'></script>
         <script type='text/javascript' src='assets/ui.js'></script>
         <link rel="stylesheet" type="text/css" href="assets/style.css">
 
@@ -22,7 +23,7 @@
 
     <body ng-app="qrms">
 
-        <header ng-controller="RootCtrl" class="no-print"><div class="wrap" ng-if="loggedIn"><p>Logged in as {{currentUser}}</p></div></header>
+        <header ng-controller="RootCtrl" class="no-print"><div class="wrap" ng-if="loggedIn"><p>Logged in as {{currentUserName}}</p></div></header>
 
         <div ui-view>
 

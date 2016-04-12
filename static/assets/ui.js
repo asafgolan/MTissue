@@ -47,15 +47,25 @@ var pms = angular.module('qrms', ['ui.router'])
 
 .controller('RootCtrl', ['$scope', '$rootScope', '$state', 'restcli', '$http', function($scope, $rootScope, $state, restcli, $http){ //base controller
 
-  $scope = $rootScope;
+  /* ROOTSCOPE = MAIN SCOPE */
+
+  // initialize variables that are useful everywhere
+  $scope = $rootScope; // irrelevant magic
   $rootScope.contentTypes = {1: "Text", 2: "File", 3: "URL"};
-  $rootScope.loggedIn = false;
-  $rootScope.currentUser;
+  $rootScope.loggedIn = false; // login flag
+  $rootScope.currentUserName; // the user string? id or object could be in some other variable
+  $rootScope.exhibits;
   
   $rootScope.auth = function(){
     if(!$http.defaults.headers.common.Authorization){
       $state.go("login");
     }
+  }
+
+  $rootScope.saveExhibit = function(data){
+    restcli.setExhibit(data).success(function(data, status){
+      console.log(data);
+    });
   }
 
 }])
@@ -70,7 +80,7 @@ var pms = angular.module('qrms', ['ui.router'])
       $http.defaults.headers.common.Authorization = data.token;
       $scope.authMessage = "Logged in as "+$scope.username;
       $rootScope.loggedIn = true;
-      $rootScope.currentUser = $scope.username;
+      $rootScope.currentUserName = $scope.username;
       $state.go("list");
     }).error(function(data, status){
       $scope.authMessage = "Invalid credentials.";
@@ -84,12 +94,10 @@ var pms = angular.module('qrms', ['ui.router'])
 .controller('ListCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
   
   $rootScope.auth();
-
-  $rootScope.exhibits;
   
   restcli.getExhibits().success(function(data, status){
     console.log(data);
-    $rootScope.exhibits = data;
+    $scope.exhibits = data;
   });
 
 }])
@@ -103,6 +111,10 @@ var pms = angular.module('qrms', ['ui.router'])
   restcli.getExhibit($state.params.id).success(function(data, status){
     $scope.exhibit = data;
   });
+  
+  $scope.saveExhibit = function(){
+    $rootScope.saveExhibit($scope.exhibit);
+  }
 
 }])
 
@@ -145,6 +157,10 @@ var pms = angular.module('qrms', ['ui.router'])
   	  },
   	  getExhibit: function(id){
   	      return $http.get('/api/exhibits/'+id)
+  	  },
+  	  setExhibit: function(data){
+  	      console.log(data);
+  	      return $http.put('/api/exhibits/'+data._id, data)
   	  }
     }
 
