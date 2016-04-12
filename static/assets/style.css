@@ -82,6 +82,12 @@ hr{
     border-bottom:0;
 }
 
+label{
+    display:inline-block;
+    width:7em;
+    margin-bottom:0.5em;
+}
+
 .wrap{
     position:relative;
     margin:0 auto;

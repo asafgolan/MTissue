@@ -3,7 +3,15 @@
     <h1>{{exhibit.title}}</h1>
 
     <div ng-repeat="piece in exhibit.content">
-        <p>{{piece.description}}</p>
+        <div ng-if="piece.type==1">
+            <p>{{piece.description}}</p>
+        </div>
+        <div ng-if="piece.type==2">
+            <p>{{piece.description}}</p>
+        </div>
+        <div ng-if="piece.type==3">
+            <p>{{piece.description}}</p>
+        </div>
     </div>
 
 </div>

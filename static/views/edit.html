@@ -4,20 +4,20 @@
     
     <div ng-repeat="piece in exhibit.content">
         <hr>
-        Language <input ng-model="piece.language"><br>
-        Type <select ng-model="piece.type">
+        <label>Language </label><input ng-model="piece.language"><br>
+        <label>Type </label><select ng-model="piece.type">
             <option ng-selected="{{typeId == piece.type}}"
                     ng-repeat="(typeId, typeName) in contentTypes"
                     value="{{typeId}}">
               {{typeName}}
             </option>
         </select><br>
-        <div ng-if="piece.type==3">URL <input type="text" ng-model="piece.url"></div>
-        <div ng-if="piece.type==2">No file handling here yet :( but URL is: "{{piece.url}}"</div>
+        <div ng-if="piece.type==3"><label>URL </label><input type="text" ng-model="piece.url"></div>
+        <div ng-if="piece.type==2"><p>No file handling here yet :( but URL is: "{{piece.url}}"</p></div>
         <textarea ng-model="piece.description"></textarea>
     </div>
     
-    <a ui-sref="print({id: exhibit._id})">Preview QR & print</a>
+    <p><a ui-sref="print({id: exhibit._id})">Preview QR & print</a></p>
     <button ng-click="saveExhibit(exhibit._id)">Save</button>
 
 </div>
