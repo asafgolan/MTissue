@@ -27,6 +27,12 @@ var pms = angular.module('qrms', ['ui.router'])
       templateUrl: 'views/edit.html',
       controller: 'EditCtrl'
 
+    }).state('new', {
+
+      url: '/new',
+      templateUrl: 'views/edit.html',
+      controller: 'NewCtrl'
+
     }).state('print', {
 
       url: '/print/:id',
@@ -37,6 +43,12 @@ var pms = angular.module('qrms', ['ui.router'])
 
       url: '/view/:id',
       templateUrl: 'views/view.html',
+      controller: 'ViewCtrl'
+
+    }).state('single', {
+
+      url: '/view/:id/:cid',
+      templateUrl: 'views/single.html',
       controller: 'ViewCtrl'
 
     });
@@ -60,12 +72,6 @@ var pms = angular.module('qrms', ['ui.router'])
     if(!$http.defaults.headers.common.Authorization){
       $state.go("login");
     }
-  }
-
-  $rootScope.saveExhibit = function(data){
-    restcli.setExhibit(data).success(function(data, status){
-      console.log(data);
-    });
   }
 
 }])
@@ -102,27 +108,54 @@ var pms = angular.module('qrms', ['ui.router'])
 
 }])
 
+.controller('NewCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
+  
+  $rootScope.auth();
+  
+  $scope.exhibit = {title:"", content:[]}
+  
+  $scope.saveExhibit = function(){
+    $scope.statusMessage = "Saving...";
+    restcli.addExhibit($scope.exhibit).success(function(data, status){
+      $state.go("edit", {id:data._id});
+    });
+  }
+  
+  $scope.addPiece = function(){
+    $scope.exhibit.content.push({language: "", description: "", type: 1, url: ""});
+  }
+
+
+}])
+
 .controller('EditCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
   
   $rootScope.auth();
 
   $scope.exhibit;
+  $scope.statusMessage;
   
   restcli.getExhibit($state.params.id).success(function(data, status){
     $scope.exhibit = data;
+    for(piece in $scope.exhibit.content){
+      $scope.exhibit.content[piece].temp_id = $scope.exhibit.content[piece]._id
+    }
   });
   
   $scope.saveExhibit = function(){
-    $rootScope.saveExhibit($scope.exhibit);
+    $scope.statusMessage = "Saving...";
+    restcli.setExhibit($scope.exhibit).success(function(data, status){
+      $scope.statusMessage = "Save successful";
+      $scope.exhibit = data;
+    });
   }
   
   $scope.uploadTarget;
   
-  $scope.newFile;
   $scope.upload = function(id) {
       $scope.uploadTarget = id;
       var fd = new FormData();
-      var targetIdx = _.findLastIndex($scope.exhibit.content, {_id: $scope.uploadTarget});
+      var targetIdx = _.findLastIndex($scope.exhibit.content, {temp_id: $scope.uploadTarget});
       var newFile = $scope.exhibit.content[targetIdx].newFile;
       fd.append("userPhoto", newFile);
       restcli.upload(fd).then(uploadHandler, uploadHandler);
@@ -131,22 +164,40 @@ var pms = angular.module('qrms', ['ui.router'])
   var uploadHandler = function(data, status) {
 
       if (data["error"]) {
-        console.log(data);
+        alert(data["error"]);
       } else {
-        var targetIdx = _.findLastIndex($scope.exhibit.content, {_id: $scope.uploadTarget});
+        var targetIdx = _.findLastIndex($scope.exhibit.content, {temp_id: $scope.uploadTarget});
         $scope.exhibit.content[targetIdx].url = "uploads/"+data[0].filename;
       }
 
   }
+  
+  $scope.addPiece = function(){
+    $scope.exhibit.content.push({language: "", description: "", type: 1, url: "", temp_id: Date.now()});
+  }
+  
+  $scope.deletePiece = function(id){
+    var deleteIndex = _.findIndex($scope.exhibit.content, function(piece) { return piece.temp_id == id })
+    $scope.exhibit.content.splice(deleteIndex, 1);
+  }
 
 }])
 
-.controller('ViewCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
+.controller('ViewCtrl', ['$scope', '$rootScope', '$state', 'restcli', '$sce', function($scope, $rootScope, $state, restcli, $sce) {
 
   $scope.exhibit;
+  $scope.child;
   
   restcli.getExhibit($state.params.id).success(function(data, status){
     $scope.exhibit = data;
+    for(var piece in $scope.exhibit.content){
+      //create SRC attributes from urls on load
+      $scope.exhibit.content[piece].src = $sce.trustAsResourceUrl($scope.exhibit.content[piece].url);
+    }
+    //spaghetti exception for the child view
+    if($state.params.cid){
+      $scope.child = _.where($scope.exhibit.content, {_id: $state.params.cid})[0];
+    }
   });
   
 
@@ -161,7 +212,7 @@ var pms = angular.module('qrms', ['ui.router'])
   restcli.getExhibit($state.params.id).success(function(data, status){
     $scope.exhibit = data;
     /* global jQuery (comment for c9 IDE) */
-    jQuery('#qrcode').qrcode("https://museoapi-vwnb.c9users.io/#/view/"+$state.params.id);
+    jQuery('#qrcode').qrcode({width: 500, height:500, text: "https://museoapi-vwnb.c9users.io/#/view/"+$state.params.id});
   });
   
 
@@ -183,6 +234,9 @@ var pms = angular.module('qrms', ['ui.router'])
   	  },
   	  setExhibit: function(data){
   	      return $http.put('/api/exhibits/'+data._id, data)
+  	  },
+  	  addExhibit: function(data){
+  	      return $http.post('/api/exhibits/', data)
   	  },
   	  upload: function(data){
 

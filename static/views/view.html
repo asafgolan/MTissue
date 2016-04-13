@@ -2,18 +2,19 @@
     
     <h1>{{exhibit.title}}</h1>
 
-    <div ng-repeat="piece in exhibit.content">
-        <div ng-if="piece.type==1">
-            <p>{{piece.description}}</p>
-        </div>
-        <div ng-if="piece.type==2">
-            <img src="{{piece.url}}">
-            <p>{{piece.description}}</p>
-        </div>
-        <div ng-if="piece.type==3">
-            <img src="{{piece.url}}">
-            <p>{{piece.description}}</p>
-        </div>
+    <div ng-repeat="piece in exhibit.content" class="piece-wrap piece-type-{{piece.type}}">
+        <hr>
+        <a ui-sref="single({id: exhibit._id, cid: piece._id})" class="flag-wrap"><img ng-if="piece.language" class="flag" ng-src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.0.0/flags/1x1/{{piece.language}}.svg"></a>
+        <h3>{{piece.title}}</h3>
+        <p class="file" ng-if="piece.type != 1 || piece.language==''">
+            <span ng-if="piece.url.split('.').pop()=='jpg' || piece.url.split('.').pop()=='jpeg' || piece.url.split('.').pop()=='png' || piece.url.split('.').pop()=='gif' ">
+                <img ng-src="{{piece.src}}">
+            </span>
+            <span ng-if="piece.url.split('.').pop()=='mp4'">
+                <video controls ng-src="{{piece.src}}"></video>
+            </span>
+        </p>
+        <p ng-if="piece.type != 1 || piece.language==''">{{piece.description}}</p>
     </div>
 
 </div>

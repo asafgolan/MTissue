@@ -58,8 +58,13 @@ table {
 
 /* CUSTOM COSMETICS HERE */
 
+body{
+    font-family:'Quattrocento Sans', Arial, sans-serif;
+}
+
 p{
     margin:1em 0;
+    line-height:1.3em;
 }
 
 h1, h2, h3, h4{
@@ -80,7 +85,7 @@ img{
 }
 
 hr{
-    margin:1em 0;
+    margin:1.5em 0;
     height:0;
     border-top:1px dotted grey;
     border-bottom:0;
@@ -92,7 +97,16 @@ label{
     margin-bottom:0.5em;
 }
 
+input{
+    vertical-align:middle;
+}
+
+textarea{
+    width:100%;
+}
+
 .wrap{
+    overflow:hidden;
     position:relative;
     margin:0 auto;
     padding:1.3em 1em;
@@ -100,4 +114,38 @@ label{
 
 .boxed{
     max-width:960px;
+}
+
+.piece-wrap{
+    float:left;
+}
+
+.piece-type-1 {
+    width:50%;
+}
+
+.piece-type-2, .piece-type-3{
+    width:100%;
+}
+
+.flag + h1, .flag-wrap + h3{
+    display: inline-block;
+}
+
+.flag{
+    height:2em;
+    vertical-align:middle;
+    margin-right:1em;
+    margin-bottom:0.8em;
+}
+
+.piece-type-1 .flag{
+    width:80%;
+    height:auto;
+    margin:0 10%;
+    border-radius:50%;
+}
+
+#qrcode canvas{
+    max-width:100%;
 }
