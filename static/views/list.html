@@ -1,6 +1,17 @@
 <div class="wrap boxed list-view">
     
-<div ng-repeat="exhibit in exhibits" class="list-item">{{exhibit.title}} <span style="float:right"><a ui-sref="edit({id: exhibit._id})">Edit</a> | <a ui-sref="view({id: exhibit._id})">View</a> | <button ng-click="delete(exhibit._id)">Delete</button></span></div>
+<h1>List of collections</h1>
+    
+<div ng-repeat="exhibit in exhibits" class="list-item">
+    {{exhibit.title}}
+    <span style="float:right">
+        View: <a ui-sref="view({id: exhibit._id})">Whole</a>
+         - <a ng-repeat="piece in exhibit.content" ui-sref="single({id: exhibit._id, cid: piece._id})"><img class="icon" ng-src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.0.0/flags/1x1/{{piece.language | lowercase}}.svg"></a>|
+        <a ui-sref="edit({id: exhibit._id})">Edit</a> |
+        <a ui-sref="print({id: exhibit._id})">QR</a> |
+        <button ng-click="delete(exhibit._id)">Delete</button>
+    </span>
+</div>
 
 <hr>
 

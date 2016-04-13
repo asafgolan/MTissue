@@ -137,7 +137,7 @@ textarea{
     width:100%;
 }
 
-.flag + h1, .flag-wrap + h3{
+.flag + h1, .flag-wrap + h2{
     display: inline-block;
 }
 
@@ -157,4 +157,11 @@ textarea{
 
 #qrcode canvas{
     max-width:100%;
+}
+
+.icon{
+    width: 1em;
+    vertical-align: middle;
+    margin-right: 0.5em;
+    border-radius: 50%;
 }
