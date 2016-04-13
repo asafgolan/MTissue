@@ -4,7 +4,7 @@
 
     <div ng-repeat="piece in exhibit.content" class="piece-wrap piece-type-{{piece.type}}">
         <hr>
-        <a ui-sref="single({id: exhibit._id, cid: piece._id})" class="flag-wrap"><img ng-if="piece.language" class="flag" ng-src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.0.0/flags/1x1/{{piece.language}}.svg"></a>
+        <a ui-sref="single({id: exhibit._id, cid: piece._id})" class="flag-wrap"><img ng-if="piece.language" class="flag" ng-src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.0.0/flags/1x1/{{piece.language | lowercase}}.svg"></a>
         <h3>{{piece.title}}</h3>
         <p class="file" ng-if="piece.type != 1 || piece.language==''">
             <span ng-if="piece.url.split('.').pop()=='jpg' || piece.url.split('.').pop()=='jpeg' || piece.url.split('.').pop()=='png' || piece.url.split('.').pop()=='gif' ">
