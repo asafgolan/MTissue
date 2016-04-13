@@ -116,6 +116,15 @@ textarea{
     max-width:960px;
 }
 
+.list-item{
+    padding:0.5em;
+    clear:both;
+}
+
+.list-item:nth-child(odd){
+    background-color:ghostwhite;
+}
+
 .piece-wrap{
     float:left;
 }

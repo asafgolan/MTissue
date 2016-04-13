@@ -33,11 +33,13 @@
         
         <hr>
         
-        <p ng-if="exhibit._id"><a ui-sref="print({id: exhibit._id})">Preview QR & print</a></p>
+        <p ng-if="exhibit._id"><a ui-sref="view({id: exhibit._id})">Preview public view</a> | <a ui-sref="print({id: exhibit._id})">Preview QR & print</a></p>
         <button ng-if="!new" ng-click="saveExhibit()">Save</button>
         <button ng-if="new" ng-click="newExhibit()">Save</button>
         <p>{{statusMessage}}</p>
     
     </div>
+    
+    <a ui-sref="list">Back to listing</a>
 
 </div>
