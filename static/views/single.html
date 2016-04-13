@@ -1,0 +1,18 @@
+<div class="wrap boxed view-view">
+    
+    <img ng-if="child.language" class="flag" ng-src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.0.0/flags/1x1/{{child.language}}.svg">
+    <h1>{{child.title}}</h1>
+
+    <hr>
+    <p class="file">
+        <span ng-if="child.url.split('.').pop()=='jpg' || child.url.split('.').pop()=='jpeg' || child.url.split('.').pop()=='png' || child.url.split('.').pop()=='gif' ">
+            <img ng-src="{{child.src}}">
+        </span>
+        <span ng-if="child.url.split('.').pop()=='mp4'">
+            <video controls ng-src="{{child.src}}"></video>
+        </span>
+    </p>
+    <p>{{child.description}}</p>
+
+
+</div>
