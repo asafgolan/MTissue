@@ -1,6 +1,6 @@
 <div class="wrap boxed list-view">
     
-<div ng-repeat="exhibit in exhibits"><a ui-sref="edit({id: exhibit._id})">{{exhibit.title}}</a></div>
+<div ng-repeat="exhibit in exhibits"><a ui-sref="edit({id: exhibit._id})">{{exhibit.title}}</a> <button ng-click="delete(exhibit._id)">Delete</button></div>
 
 <hr>
 

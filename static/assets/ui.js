@@ -100,10 +100,20 @@ var pms = angular.module('qrms', ['ui.router'])
   
   $rootScope.auth();
   
-  restcli.getExhibits().success(function(data, status){
-    console.log(data);
-    $scope.exhibits = data;
-  });
+  $scope.getExhibits = function(){
+    restcli.getExhibits().success(function(data, status){
+      console.log(data);
+      $scope.exhibits = data;
+    });
+  }
+  
+  $scope.getExhibits();
+  
+  $scope.delete = function(id){
+    restcli.deleteExhibit(id).success(function(data, status){
+      $scope.getExhibits();
+    });
+  }
 
 }])
 
@@ -239,6 +249,9 @@ var pms = angular.module('qrms', ['ui.router'])
   	  },
   	  addExhibit: function(data){
   	      return $http.post('/api/exhibits/', data)
+  	  },
+  	  deleteExhibit: function(id){
+  	      return $http.delete('/api/exhibits/'+id);
   	  },
   	  upload: function(data){
 
