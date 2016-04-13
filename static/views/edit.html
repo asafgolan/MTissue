@@ -34,7 +34,8 @@
         <hr>
         
         <p ng-if="exhibit._id"><a ui-sref="print({id: exhibit._id})">Preview QR & print</a></p>
-        <button ng-click="saveExhibit()">Save</button>
+        <button ng-if="!new" ng-click="saveExhibit()">Save</button>
+        <button ng-if="new" ng-click="newExhibit()">Save</button>
         <p>{{statusMessage}}</p>
     
     </div>

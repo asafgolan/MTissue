@@ -31,7 +31,7 @@ var pms = angular.module('qrms', ['ui.router'])
 
       url: '/new',
       templateUrl: 'views/edit.html',
-      controller: 'NewCtrl'
+      controller: 'EditCtrl'
 
     }).state('print', {
 
@@ -57,16 +57,14 @@ var pms = angular.module('qrms', ['ui.router'])
 
 }])
 
-.controller('RootCtrl', ['$scope', '$rootScope', '$state', 'restcli', '$http', function($scope, $rootScope, $state, restcli, $http){ //base controller
-
   /* ROOTSCOPE = MAIN SCOPE */
+.controller('RootCtrl', ['$scope', '$rootScope', '$state', 'restcli', '$http', function($scope, $rootScope, $state, restcli, $http){ //base controller
 
   // initialize variables that are useful everywhere
   $scope = $rootScope; // irrelevant magic
   $rootScope.contentTypes = {1: "Text", 2: "File", 3: "URL"};
   $rootScope.loggedIn = false; // login flag
   $rootScope.currentUserName; // the user string? id or object could be in some other variable
-  $rootScope.exhibits;
   
   $rootScope.auth = function(){
     if(!$http.defaults.headers.common.Authorization){
@@ -76,6 +74,7 @@ var pms = angular.module('qrms', ['ui.router'])
 
 }])
 
+//LOGIN
 .controller('LoginCtrl', ['$scope', '$rootScope', '$state', '$http', 'restcli', function($scope, $rootScope, $state, $http, restcli) {
 
   $scope.username = "";
@@ -96,7 +95,7 @@ var pms = angular.module('qrms', ['ui.router'])
 
 }])
 
-
+//LIST ALL STUFFS
 .controller('ListCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
   
   $rootScope.auth();
@@ -108,68 +107,31 @@ var pms = angular.module('qrms', ['ui.router'])
 
 }])
 
-.controller('NewCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
-  
-  $rootScope.auth();
-  
-  $scope.exhibit = {title:"", content:[]}
-  
-  $scope.saveExhibit = function(){
-    $scope.statusMessage = "Saving...";
-    restcli.addExhibit($scope.exhibit).success(function(data, status){
-      $state.go("edit", {id:data._id});
-    });
-  }
-  
-  $scope.uploadTarget;
-  
-  $scope.upload = function(id) {
-          console.log(id);
-      $scope.uploadTarget = id;
-      var fd = new FormData();
-      var targetIdx = _.findLastIndex($scope.exhibit.content, {temp_id: $scope.uploadTarget});
-      var newFile = $scope.exhibit.content[targetIdx].newFile;
-      fd.append("userPhoto", newFile);
-      restcli.upload(fd).then(uploadHandler, uploadHandler);
-  }
 
-  var uploadHandler = function(data, status) {
-
-      if (data["error"]) {
-        alert(data["error"]);
-      } else {
-        var targetIdx = _.findLastIndex($scope.exhibit.content, {temp_id: $scope.uploadTarget});
-        $scope.exhibit.content[targetIdx].url = "uploads/"+data[0].filename;
-      }
-
-  }
-  
-  $scope.addPiece = function(){
-    $scope.exhibit.content.push({language: "", description: "", type: 1, url: "", temp_id: Date.now()});
-  }
-  
-  $scope.deletePiece = function(id){
-    var deleteIndex = _.findIndex($scope.exhibit.content, function(piece) { return piece.temp_id == id })
-    $scope.exhibit.content.splice(deleteIndex, 1);
-  }
-
-
-}])
-
+//EDIT AND CREATE NEW
 .controller('EditCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
   
   $rootScope.auth();
-
+  
   $scope.exhibit;
   $scope.statusMessage;
   
-  restcli.getExhibit($state.params.id).success(function(data, status){
-    $scope.exhibit = data;
-    for(var piece in $scope.exhibit.content){
-      $scope.exhibit.content[piece].temp_id = $scope.exhibit.content[piece]._id
-    }
-  });
+  //making a new one or editing old?
+  $scope.new = $state.params.id ? false : true;
   
+  if(!$scope.new){
+    restcli.getExhibit($state.params.id).success(function(data, status){
+      //set main object
+      $scope.exhibit = data;
+      for(var piece in $scope.exhibit.content){
+        $scope.exhibit.content[piece].temp_id = $scope.exhibit.content[piece]._id; //give everyone temp ids because unsaved pieces of the content array dont have real ones
+      }
+    });
+  }else{
+    $scope.exhibit = {title: "", content: []}; //create fresh main object
+  }
+  
+  //save and re-init
   $scope.saveExhibit = function(){
     $scope.statusMessage = "Saving...";
     restcli.setExhibit($scope.exhibit).success(function(data, status){
@@ -178,10 +140,18 @@ var pms = angular.module('qrms', ['ui.router'])
     });
   }
   
+  //save new and redirect to edit view
+  $scope.newExhibit = function(){
+    $scope.statusMessage = "Saving...";
+    restcli.addExhibit($scope.exhibit).success(function(data, status){
+      $state.go("edit", {id:data._id});
+    });
+  }
+  
+  //a container upload piece id that will be used in the following two functions
   $scope.uploadTarget;
   
   $scope.upload = function(id) {
-          console.log(id);
       $scope.uploadTarget = id;
       var fd = new FormData();
       var targetIdx = _.findLastIndex($scope.exhibit.content, {temp_id: $scope.uploadTarget});
@@ -212,6 +182,7 @@ var pms = angular.module('qrms', ['ui.router'])
 
 }])
 
+//PUBLIC VIEW
 .controller('ViewCtrl', ['$scope', '$rootScope', '$state', 'restcli', '$sce', function($scope, $rootScope, $state, restcli, $sce) {
 
   $scope.exhibit;
@@ -232,6 +203,7 @@ var pms = angular.module('qrms', ['ui.router'])
 
 }])
 
+//PRINT
 .controller('PrintCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
   
   $rootScope.auth();
@@ -247,6 +219,7 @@ var pms = angular.module('qrms', ['ui.router'])
 
 }])
 
+//factory with API helpers
 .factory('restcli', ['$http', '$q', function($http, $q){
   return {
   	  auth: function(username, password) {
@@ -272,7 +245,7 @@ var pms = angular.module('qrms', ['ui.router'])
             var deferred = $q.defer();
             var getProgressListener = function(deferred) {
                 return function(event) {
-                    //do some magic
+                    //this can be used to show an upload bar
                     var progpercent = ((100 * (event.loaded / event.total)).toFixed()) + "%";
                 };
             };
@@ -313,6 +286,7 @@ var pms = angular.module('qrms', ['ui.router'])
 
 }])
 
+//model for sending files as FormData
 .directive('fileModel', ['$parse', function($parse) {
     return {
         restrict: 'A',
