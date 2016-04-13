@@ -121,8 +121,36 @@ var pms = angular.module('qrms', ['ui.router'])
     });
   }
   
+  $scope.uploadTarget;
+  
+  $scope.upload = function(id) {
+          console.log(id);
+      $scope.uploadTarget = id;
+      var fd = new FormData();
+      var targetIdx = _.findLastIndex($scope.exhibit.content, {temp_id: $scope.uploadTarget});
+      var newFile = $scope.exhibit.content[targetIdx].newFile;
+      fd.append("userPhoto", newFile);
+      restcli.upload(fd).then(uploadHandler, uploadHandler);
+  }
+
+  var uploadHandler = function(data, status) {
+
+      if (data["error"]) {
+        alert(data["error"]);
+      } else {
+        var targetIdx = _.findLastIndex($scope.exhibit.content, {temp_id: $scope.uploadTarget});
+        $scope.exhibit.content[targetIdx].url = "uploads/"+data[0].filename;
+      }
+
+  }
+  
   $scope.addPiece = function(){
-    $scope.exhibit.content.push({language: "", description: "", type: 1, url: ""});
+    $scope.exhibit.content.push({language: "", description: "", type: 1, url: "", temp_id: Date.now()});
+  }
+  
+  $scope.deletePiece = function(id){
+    var deleteIndex = _.findIndex($scope.exhibit.content, function(piece) { return piece.temp_id == id })
+    $scope.exhibit.content.splice(deleteIndex, 1);
   }
 
 
@@ -137,7 +165,7 @@ var pms = angular.module('qrms', ['ui.router'])
   
   restcli.getExhibit($state.params.id).success(function(data, status){
     $scope.exhibit = data;
-    for(piece in $scope.exhibit.content){
+    for(var piece in $scope.exhibit.content){
       $scope.exhibit.content[piece].temp_id = $scope.exhibit.content[piece]._id
     }
   });
@@ -153,6 +181,7 @@ var pms = angular.module('qrms', ['ui.router'])
   $scope.uploadTarget;
   
   $scope.upload = function(id) {
+          console.log(id);
       $scope.uploadTarget = id;
       var fd = new FormData();
       var targetIdx = _.findLastIndex($scope.exhibit.content, {temp_id: $scope.uploadTarget});
