@@ -198,11 +198,29 @@ var pms = angular.module('qrms', ['ui.router'])
   $scope.exhibit;
   $scope.child;
   
+
+  $scope.fileTypes = {
+    html : "link",
+    php : "link",
+    jpg : "pic",
+    jpeg : "pic",
+    png : "pic",
+    gif : "pic",
+    mp4 : "vid"
+  }
+  
   restcli.getExhibit($state.params.id).success(function(data, status){
     $scope.exhibit = data;
     for(var piece in $scope.exhibit.content){
+      
       //create SRC attributes from urls on load
       $scope.exhibit.content[piece].src = $sce.trustAsResourceUrl($scope.exhibit.content[piece].url);
+
+      $scope.exhibit.content[piece].medium = $scope.fileTypes[$scope.exhibit.content[piece].url.split('.').pop()];
+      if(typeof $scope.exhibit.content[piece].medium == "undefined"){
+        $scope.exhibit.content[piece].medium = "link";
+      }
+      
     }
     //spaghetti exception for the child view
     if($state.params.cid){

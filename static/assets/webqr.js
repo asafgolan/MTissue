@@ -163,7 +163,7 @@ function setwebcam()
         n.getUserMedia({video: true, audio: false}, success, error);
     else
     if(n.mediaDevices.getUserMedia)
-        n.mediaDevices.getUserMedia({video: { facingMode: { exact: "environment" } } , audio: false})
+        n.mediaDevices.getUserMedia(/**{video: /{ facingMode: { exact: "environment" } } , audio: false}**/)
             .then(success)
             .catch(error);
     else

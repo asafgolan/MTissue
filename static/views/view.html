@@ -2,17 +2,18 @@
     
     <h1>{{exhibit.title}}</h1>
 
-    <div ng-repeat="piece in exhibit.content" class="piece-wrap piece-type-{{piece.type}}">
+    <div ng-repeat="piece in exhibit.content" class="piece-wrap piece-type-{{piece.type}}" ng-class="{translation : piece.language}">
         <hr>
         <a ui-sref="single({id: exhibit._id, cid: piece._id})" class="flag-wrap"><img ng-if="piece.language" class="flag" ng-src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.0.0/flags/1x1/{{piece.language | lowercase}}.svg"></a>
         <h2>{{piece.title}}</h2>
         <p class="file" ng-if="piece.type != 1 || piece.language==''">
-            <span ng-if="piece.url.split('.').pop()=='jpg' || piece.url.split('.').pop()=='jpeg' || piece.url.split('.').pop()=='png' || piece.url.split('.').pop()=='gif' ">
+            <span ng-if="piece.medium=='pic'">
                 <img ng-src="{{piece.src}}">
             </span>
-            <span ng-if="piece.url.split('.').pop()=='mp4'">
+            <span ng-if="piece.medium=='vid'">
                 <video controls ng-src="{{piece.src}}"></video>
             </span>
+            <a ng-if="piece.medium=='link'" href="{{piece.src}}">{{piece.url}}</a>
         </p>
         <p ng-if="piece.type != 1 || piece.language==''">{{piece.description}}</p>
     </div>
