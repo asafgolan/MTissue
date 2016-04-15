@@ -216,7 +216,9 @@ var pms = angular.module('qrms', ['ui.router'])
       //create SRC attributes from urls on load
       $scope.exhibit.content[piece].src = $sce.trustAsResourceUrl($scope.exhibit.content[piece].url);
 
-      $scope.exhibit.content[piece].medium = $scope.fileTypes[$scope.exhibit.content[piece].url.split('.').pop()];
+      if($scope.exhibit.url){
+        $scope.exhibit.content[piece].medium = $scope.fileTypes[$scope.exhibit.content[piece].url.split('.').pop()];
+      }
       if(typeof $scope.exhibit.content[piece].medium == "undefined"){
         $scope.exhibit.content[piece].medium = "link";
       }
