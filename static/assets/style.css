@@ -159,7 +159,7 @@ textarea{
     border-radius:50%;
 }
 
-#qrcode canvas{
+#qr-canvas{
     max-width:100%;
 }
 
