@@ -65,12 +65,13 @@ var pms = angular.module('qrms', ['ui.router'])
   $rootScope.contentTypes = {1: "Text", 2: "File", 3: "URL"};
   $rootScope.loggedIn = false; // login flag
   $rootScope.currentUserName; // the user string? id or object could be in some other variable
+  $rootScope.resourceList;
+
+  restcli.getAudioResources().success(function(data, status){
+    console.log(data);
+  });
   
-  $rootScope.auth = function(){
-    if(!$http.defaults.headers.common.Authorization){
-      $state.go("login");
-    }
-  }
+
 
 }])
 
@@ -243,7 +244,7 @@ var pms = angular.module('qrms', ['ui.router'])
   restcli.getExhibit($state.params.id).success(function(data, status){
     $scope.exhibit = data;
     /* global jQuery (comment for c9 IDE) */
-    jQuery('#qrcode').qrcode({width: 500, height:500, text: "https://museoapi-vwnb.c9users.io/#/view/"+$state.params.id});
+    jQuery('#qrcode').qrcode({width: 500, height:500, text: "http://museoapi-vwnb.c9users.io/#/view/"+$state.params.id});
   });
   
 
@@ -252,6 +253,10 @@ var pms = angular.module('qrms', ['ui.router'])
 //factory with API helpers
 .factory('restcli', ['$http', '$q', function($http, $q){
   return {
+      getAudioResources: function() {
+          var queryLink = "https://json2jsonp.com/?url=http://resourcespace.tekniikanmuseo.fi/plugins/api_audio_search/index.php/?key=GpDVpyeWgjz_vSOWSmYWQfKWKmR5QKIRvHfvJlfaSI2e0PO40NpqXEbFe2tktiCnTatqpuo5zpNt9xBjYbExULC98NBpWWbSXw-Fkp9TP2UffogX3B018h--LMwbnkgB&format=mp3&link=true&callback=JSON_CALLBACK";
+          return $http.jsonp(queryLink);
+      },
   	  auth: function(username, password) {
   		    return $http.post('/api/authenticate', {username: username, password: password});
   	  },
