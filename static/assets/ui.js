@@ -201,7 +201,7 @@ var pms = angular.module('qrms', ['ui.router'])
       title: $scope.audioResources[fileId][0]['Title'],
       description: $scope.parseDescription($scope.audioResources[fileId][0]),
       type: 3,
-      url: $scope.audioResources[fileId][0]['Original filename'],
+      url: $scope.audioResources[fileId][0]['Original filename'], //todo fix
       temp_id: Date.now()
     });
   }
