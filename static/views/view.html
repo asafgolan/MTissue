@@ -13,6 +13,9 @@
             <span ng-if="piece.medium=='vid'">
                 <video controls ng-src="{{piece.src}}"></video>
             </span>
+            <span ng-if="piece.medium=='noiz'">
+                <audio controls ng-src="{{piece.src}}"></audio>
+            </span>
             <a ng-if="piece.medium=='link'" href="{{piece.src}}">{{piece.url}}</a>
         </p>
         <p ng-if="piece.type != 1 || piece.language==''">{{piece.description}}</p>

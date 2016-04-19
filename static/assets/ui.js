@@ -65,13 +65,12 @@ var pms = angular.module('qrms', ['ui.router'])
   $rootScope.contentTypes = {1: "Text", 2: "File", 3: "URL"};
   $rootScope.loggedIn = false; // login flag
   $rootScope.currentUserName; // the user string? id or object could be in some other variable
-  $rootScope.resourceList;
 
-  restcli.getAudioResources().success(function(data, status){
-    console.log(data);
-  });
-  
-
+  $rootScope.auth = function(){
+    if(!$http.defaults.headers.common.Authorization){
+      $state.go("login");
+    }
+  }
 
 }])
 
@@ -190,6 +189,26 @@ var pms = angular.module('qrms', ['ui.router'])
     var deleteIndex = _.findIndex($scope.exhibit.content, function(piece) { return piece.temp_id == id })
     $scope.exhibit.content.splice(deleteIndex, 1);
   }
+  
+  $scope.audioResources;
+  restcli.getAudioResources().success(function(data, status){
+    $scope.audioResources = data;
+  });
+  
+  $scope.newAudioPiece = function(fileId){
+    $scope.exhibit.content.push({
+      language: "",
+      title: $scope.audioResources[fileId][0]['Title'],
+      description: $scope.parseDescription($scope.audioResources[fileId][0]),
+      type: 3,
+      url: $scope.audioResources[fileId][0]['Original filename'],
+      temp_id: Date.now()
+    });
+  }
+  
+  $scope.parseDescription = function(o){
+    return o["Category"]+"/"+o["Original filename"];
+  }
 
 }])
 
@@ -207,7 +226,9 @@ var pms = angular.module('qrms', ['ui.router'])
     jpeg : "pic",
     png : "pic",
     gif : "pic",
-    mp4 : "vid"
+    mp4 : "vid",
+    mp3 : "noiz",
+    wav : "noiz"
   }
   
   restcli.getExhibit($state.params.id).success(function(data, status){
@@ -215,9 +236,10 @@ var pms = angular.module('qrms', ['ui.router'])
     for(var piece in $scope.exhibit.content){
       
       //create SRC attributes from urls on load
+      
       $scope.exhibit.content[piece].src = $sce.trustAsResourceUrl($scope.exhibit.content[piece].url);
-
-      if($scope.exhibit.url){
+      
+      if($scope.exhibit.content[piece].url){
         $scope.exhibit.content[piece].medium = $scope.fileTypes[$scope.exhibit.content[piece].url.split('.').pop()];
       }
       if(typeof $scope.exhibit.content[piece].medium == "undefined"){
