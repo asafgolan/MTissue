@@ -195,6 +195,21 @@ var pms = angular.module('qrms', ['ui.router'])
     console.log($scope.audioResources);
     $scope.audioResources = data;
   });
+  
+  $scope.newAudioPiece = function(fileId){
+    $scope.exhibit.content.push({
+      language: "",
+      title: $scope.audioResources[fileId][0]['Title'],
+      description: $scope.parseDescription($scope.audioResources[fileId][0]),
+      type: 3,
+      url: $scope.audioResources[fileId][0]['Original filename'], //todo fix
+      temp_id: Date.now()
+    });
+  }
+  
+  $scope.parseDescription = function(o){
+    return o["Category"]+"/"+o["Original filename"];
+  }
 
 }])
 
