@@ -14,7 +14,7 @@
                 <video controls ng-src="{{piece.src}}"></video>
             </span>
             <span ng-if="piece.medium=='noiz'">
-              <audio controls ng-src={{piece.resourceSpaceUrl}} type="audio/mpeg"></audio>
+              <audio controls ng-src={{piece.src}} type="audio/mpeg"></audio>
             </span>
             <a ng-if="piece.medium=='link'" href="{{piece.src}}">{{piece.url}}</a>
         </p>

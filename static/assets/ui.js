@@ -192,7 +192,7 @@ var pms = angular.module('qrms', ['ui.router'])
   
   $scope.audioResources;
   restcli.getAudioResources().success(function(data, status){
-    console.log($scope.audioResources);
+    console.log(data);
     $scope.audioResources = data;
   });
   
@@ -202,7 +202,7 @@ var pms = angular.module('qrms', ['ui.router'])
       title: $scope.audioResources[fileId][0]['Title'],
       description: $scope.parseDescription($scope.audioResources[fileId][0]),
       type: 3,
-      url: $scope.audioResources[fileId][0]['Original filename'], //todo fix
+      url: $scope.audioResources[fileId][0]['Download link'],
       temp_id: Date.now()
     });
   }
@@ -232,16 +232,19 @@ var pms = angular.module('qrms', ['ui.router'])
     mp3 : "noiz"
   }
   
+  $scope.fileExtension = function( url ) {
+      return url.split('.').pop().split(/\#|\?/)[0];
+  }
+  
   restcli.getExhibit($state.params.id).success(function(data, status){
     $scope.exhibit = data;
     for(var piece in $scope.exhibit.content){
       
       //create SRC attributes from urls on load
       $scope.exhibit.content[piece].src = $sce.trustAsResourceUrl($scope.exhibit.content[piece].url);
-      $scope.exhibit.content[piece].resourceSpaceUrl = $sce.trustAsResourceUrl($scope.exhibit.content[piece].resourceSpaceUrl);
 
       if($scope.exhibit.content[piece].url){
-        $scope.exhibit.content[piece].medium = $scope.fileTypes[$scope.exhibit.content[piece].url.split('.').pop()];
+        $scope.exhibit.content[piece].medium = $scope.fileTypes[$scope.fileExtension($scope.exhibit.content[piece].url)];
       }
       if(typeof $scope.exhibit.content[piece].medium == "undefined"){
         $scope.exhibit.content[piece].medium = "link";
@@ -277,7 +280,7 @@ var pms = angular.module('qrms', ['ui.router'])
 .factory('restcli', ['$http', '$q', function($http, $q){
   return {
       getAudioResources: function() {
-          var queryLink = "https://json2jsonp.com/?url=http://resourcespace.tekniikanmuseo.fi/plugins/api_audio_search/index.php/?key=GpDVpyeWgjz_vSOWSmYWQfKWKmR5QKIRvHfvJlfaSI2e0PO40NpqXEbFe2tktiCnTatqpuo5zpNt9xBjYbExULC98NBpWWbSXw-Fkp9TP2UffogX3B018h--LMwbnkgB&format=mp3&link=true&callback=JSON_CALLBACK";
+          var queryLink = "https://json2jsonp.com/?url="+encodeURIComponent("http://resourcespace.tekniikanmuseo.fi/plugins/api_audio_search/index.php/?key=GpDVpyeWgjz_vSOWSmYWQfKWKmR5QKIRvHfvJlfaSI2e0PO40NpqXEbFe2tktiCnTatqpuo5zpNt9xBjYbExULC98NBpWWbSXw-Fkp9TP2UffogX3B018h--LMwbnkgB&format=mp3&link=true")+"&callback=JSON_CALLBACK";
           return $http.jsonp(queryLink);
       },
   	  auth: function(username, password) {
