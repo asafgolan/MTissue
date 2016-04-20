@@ -62,7 +62,7 @@ var pms = angular.module('qrms', ['ui.router'])
 
   // initialize variables that are useful everywhere
   $scope = $rootScope; // irrelevant magic
-  $rootScope.contentTypes = {1: "Text", 2: "File", 3: "URL", 4:"ResourceApi"};
+  $rootScope.contentTypes = {1: "Text", 2: "File", 3: "URL"};
   $rootScope.loggedIn = false; // login flag
   $rootScope.currentUserName; // the user string? id or object could be in some other variable
 
@@ -195,8 +195,6 @@ var pms = angular.module('qrms', ['ui.router'])
     console.log($scope.audioResources);
     $scope.audioResources = data;
   });
- getAudioResources();
- 
 
 }])
 
