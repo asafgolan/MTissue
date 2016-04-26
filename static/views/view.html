@@ -6,7 +6,8 @@
         <hr>
         <a ui-sref="single({id: exhibit._id, cid: piece._id})" class="flag-wrap"><img ng-if="piece.language" class="flag" ng-src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.0.0/flags/1x1/{{piece.language | lowercase}}.svg"></a>
         <h2>{{piece.title}}</h2>
-        <p class="file" ng-if="piece.type != 1 || piece.language==''">
+        
+        <p class="file" ng-if="(piece.type != 1 || piece.language=='') && piece.type != 4">
             <span ng-if="piece.medium=='pic'">
                 <img ng-src="{{piece.src}}">
             </span>
@@ -18,7 +19,9 @@
             </span>
             <a ng-if="piece.medium=='link'" href="{{piece.src}}">{{piece.url}}</a>
         </p>
+        <div ng-if="piece.type == 4" class="youtube" ng-attr-id="{{'vid'+piece._id}}" data-video="{{piece.url}}"></div>
         <p ng-if="piece.type != 1 || piece.language==''">{{piece.description}}</p>
+
     </div>
 
 </div>

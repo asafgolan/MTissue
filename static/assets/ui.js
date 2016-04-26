@@ -62,9 +62,11 @@ var pms = angular.module('qrms', ['ui.router'])
 
   // initialize variables that are useful everywhere
   $scope = $rootScope; // irrelevant magic
-  $rootScope.contentTypes = {1: "Text", 2: "File", 3: "URL"};
+  $rootScope.contentTypes = {1: "Text", 2: "File", 3: "URL", 4: "Youtube"};
   $rootScope.loggedIn = false; // login flag
   $rootScope.currentUserName; // the user string? id or object could be in some other variable
+  
+  console.log();
 
   $rootScope.auth = function(){
     if(!$http.defaults.headers.common.Authorization){
@@ -196,13 +198,34 @@ var pms = angular.module('qrms', ['ui.router'])
     $scope.audioResources = data;
   });
   
-  $scope.newAudioPiece = function(fileId){
+  
+     
+  $scope.newAudioPiece = function(fileIdx){
     $scope.exhibit.content.push({
       language: "",
-      title: $scope.audioResources[fileId][0]['Title'],
-      description: $scope.parseDescription($scope.audioResources[fileId][0]),
+      title: $scope.audioResources[fileIdx][0]['Title'],
+      description: $scope.parseDescription($scope.audioResources[fileIdx][0]),
       type: 3,
-      url: $scope.audioResources[fileId][0]['Download link'],
+      url: $scope.audioResources[fileIdx][0]['Download link'],
+      temp_id: Date.now()
+    });
+  }
+  
+  $scope.youtubeVideos = [];
+
+  restcli.getYoutubeVideos().success(function(data, status){
+    console.log(data);
+    $scope.youtubeVideos = data.items;
+    
+  });
+  
+  $scope.newYoutubePiece = function(videoIdx){
+    $scope.exhibit.content.push({
+      language: "",
+      title: $scope.youtubeVideos[videoIdx]["snippet"]["title"],
+      description: "",
+      type: 4,
+      url: $scope.youtubeVideos[videoIdx]["id"]["videoId"],
       temp_id: Date.now()
     });
   }
@@ -214,12 +237,11 @@ var pms = angular.module('qrms', ['ui.router'])
 }])
 
 //PUBLIC VIEW
-.controller('ViewCtrl', ['$scope', '$rootScope', '$state', 'restcli', '$sce', function($scope, $rootScope, $state, restcli, $sce) {
+.controller('ViewCtrl', ['$scope', '$rootScope', '$state', 'restcli', '$sce', '$timeout', function($scope, $rootScope, $state, restcli, $sce, $timeout) {
 
   $scope.exhibit;
   $scope.child;
   
-
   $scope.fileTypes = {
     html : "link",
     php : "link",
@@ -255,6 +277,12 @@ var pms = angular.module('qrms', ['ui.router'])
     if($state.params.cid){
       $scope.child = _.where($scope.exhibit.content, {_id: $state.params.cid})[0];
     }
+    
+    $timeout(function () {
+      //defined in youtube.js
+      loadYoutubePlayers();
+    }, 0, false);
+
   });
   
 
@@ -279,6 +307,11 @@ var pms = angular.module('qrms', ['ui.router'])
 //factory with API helpers
 .factory('restcli', ['$http', '$q', function($http, $q){
   return {
+    getYoutubeVideos: function(){
+        var queryLink =  "https://json2jsonp.com/?url="+encodeURIComponent('https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&channelId=UCYmgafhGsL3zCP6H1eObajg&key=AIzaSyDgzKrvkzEMLk96SNczfyKKnlp58UO9WKY')+"&callback=JSON_CALLBACK";
+        return $http.jsonp(queryLink);
+      },
+
       getAudioResources: function() {
           var queryLink = "https://json2jsonp.com/?url="+encodeURIComponent("http://resourcespace.tekniikanmuseo.fi/plugins/api_audio_search/index.php/?key=GpDVpyeWgjz_vSOWSmYWQfKWKmR5QKIRvHfvJlfaSI2e0PO40NpqXEbFe2tktiCnTatqpuo5zpNt9xBjYbExULC98NBpWWbSXw-Fkp9TP2UffogX3B018h--LMwbnkgB&format=mp3&link=true")+"&callback=JSON_CALLBACK";
           return $http.jsonp(queryLink);

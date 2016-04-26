@@ -96,13 +96,15 @@ hr{
 }
 
 label{
+    vertical-align:middle;
     display:inline-block;
-    width:7em;
+    width:11em;
     margin-bottom:0.5em;
 }
 
-input{
+input, select, button{
     vertical-align:middle;
+    margin-bottom:0.5em;
 }
 
 textarea{
@@ -113,7 +115,7 @@ textarea{
     overflow:hidden;
     position:relative;
     margin:0 auto;
-    padding:1.3em 1em;
+    padding:2em 1em;
 }
 
 .boxed{
@@ -137,7 +139,7 @@ textarea{
     width:50%;
 }
 
-.piece-type-2, .piece-type-3{
+.piece-type-2, .piece-type-3, .piece-type-4{
     width:100%;
 }
 

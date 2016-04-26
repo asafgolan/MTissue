@@ -20,6 +20,7 @@
             <label>Current file</label><span>{{piece.url}}</span>
         </div>
         <div ng-if="piece.type==3"><label>URL </label><input type="text" ng-model="piece.url" placeholder="http://"></div>
+        <div ng-if="piece.type==4"><label>Video ID </label><input type="text" ng-model="piece.url" placeholder="Youtube ID"></div>
         <textarea rows="8" ng-model="piece.description"></textarea>
         <button ng-click="deletePiece(piece.temp_id)">Delete this part</button>
         
@@ -33,10 +34,17 @@
         
         <br>
         
-        <select ng-model="newAudioFile" ng-change="newAudioPiece(newAudioFile)">
-            <option ng-repeat="(resourceId, resource) in audioResources"
-                    value="{{resourceId}}">
-                {{audioResources[resourceId][0]['Title']}}
+        <label>Get piece from Youtube </label><select ng-model="newYoutubeLink" ng-change="newYoutubePiece(newYoutubeLink)">
+            <option ng-repeat="(videoIdx, video) in youtubeVideos"
+                    value="{{videoIdx}}"
+                    ng-if="video.id.kind == 'youtube#video'">
+                {{video.snippet.title}}
+            </option>
+        </select><br>
+        <label>Get piece from audio resources </label><select ng-model="newAudioFile" ng-change="newAudioPiece(newAudioFile)">
+            <option ng-repeat="(resourceIdx, resource) in audioResources"
+                    value="{{resourceIdx}}">
+                {{resource[0]['Title']}}
             </option>
         </select>
         
