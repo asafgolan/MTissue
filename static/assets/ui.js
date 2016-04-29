@@ -1,5 +1,5 @@
 
-
+var config = require('../.../config');
 //init frontpage
 var pms = angular.module('qrms', ['ui.router'])
 
@@ -308,12 +308,11 @@ var pms = angular.module('qrms', ['ui.router'])
 .factory('restcli', ['$http', '$q', function($http, $q){
   return {
     getYoutubeVideos: function(){
-        var queryLink =  "https://json2jsonp.com/?url="+encodeURIComponent('https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&channelId=UCYmgafhGsL3zCP6H1eObajg&key=AIzaSyDgzKrvkzEMLk96SNczfyKKnlp58UO9WKY')+"&callback=JSON_CALLBACK";
+        var queryLink =  "https://json2jsonp.com/?url="+encodeURIComponent("https://www.googleapis.com/youtube/v3/search?key=" + config.youtubeApiKey + " &channelId=" + config.museoChanelId + "&part=snippet,id&order=date&maxResults=50")+"&callback=JSON_CALLBACK";
         return $http.jsonp(queryLink);
       },
-
       getAudioResources: function() {
-          var queryLink = "https://json2jsonp.com/?url="+encodeURIComponent("http://resourcespace.tekniikanmuseo.fi/plugins/api_audio_search/index.php/?key=GpDVpyeWgjz_vSOWSmYWQfKWKmR5QKIRvHfvJlfaSI2e0PO40NpqXEbFe2tktiCnTatqpuo5zpNt9xBjYbExULC98NBpWWbSXw-Fkp9TP2UffogX3B018h--LMwbnkgB&format=mp3&link=true")+"&callback=JSON_CALLBACK";
+          var queryLink = "https://json2jsonp.com/?url="+encodeURIComponent("http://resourcespace.tekniikanmuseo.fi/plugins/api_audio_search/index.php/?key="+ config.resourseSpaceApiKey +"&format=mp3&link=true")+"&callback=JSON_CALLBACK";
           return $http.jsonp(queryLink);
       },
   	  auth: function(username, password) {

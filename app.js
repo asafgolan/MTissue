@@ -79,20 +79,6 @@ app.post('/api/authenticate', function(req, res) {
           var token = jwt.sign(user, config.secret, {
             expiresIn: 10080 // in seconds
           });
-          //client.set('AuthToken', 'JWT ' + token, redis.print);
-
-          //Now Get teh Value
-
-          /*
-          client.get('vege',function(error,value)
-          {
-          if(error)
-          {
-          throw error;
-          }
-          console.log('The vegetable is = '+ value);
-          });
-          */
 
           res.json({
             success: true,
