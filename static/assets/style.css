@@ -123,6 +123,7 @@ textarea{
 }
 
 .list-item{
+    line-height:1.5em;
     padding:0.5em;
     clear:both;
 }
@@ -170,4 +171,27 @@ textarea{
     vertical-align: middle;
     margin-right: 0.5em;
     border-radius: 50%;
+}
+
+footer{
+    text-align: center;
+    font-size: 20px;
+}
+
+#qrcode{
+    text-align: center;
+}
+
+.titel-center{
+    text-align: center;
+}
+
+.video-id-description{
+        color: red;
+}
+
+button{
+    border:0;
+    background-color:#dde;
+    padding:0.5em 1em;
 }

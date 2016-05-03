@@ -1,5 +1,5 @@
 
-var config = require('../.../config');
+//var config = require('../.../config');
 //init frontpage
 var pms = angular.module('qrms', ['ui.router'])
 
@@ -62,7 +62,7 @@ var pms = angular.module('qrms', ['ui.router'])
 
   // initialize variables that are useful everywhere
   $scope = $rootScope; // irrelevant magic
-  $rootScope.contentTypes = {1: "Text", 2: "File", 3: "URL", 4: "Youtube"};
+  $rootScope.contentTypes = {1: "Only text", 2: "File", 3: "URL", 4: "Youtube"};
   $rootScope.loggedIn = false; // login flag
   $rootScope.currentUserName; // the user string? id or object could be in some other variable
   
@@ -206,6 +206,7 @@ var pms = angular.module('qrms', ['ui.router'])
       title: $scope.audioResources[fileIdx][0]['Title'],
       description: $scope.parseDescription($scope.audioResources[fileIdx][0]),
       type: 3,
+      createdFromDropDown: 1,
       url: $scope.audioResources[fileIdx][0]['Download link'],
       temp_id: Date.now()
     });
@@ -223,7 +224,8 @@ var pms = angular.module('qrms', ['ui.router'])
     $scope.exhibit.content.push({
       language: "",
       title: $scope.youtubeVideos[videoIdx]["snippet"]["title"],
-      description: "",
+      description: $scope.youtubeVideos[videoIdx]["snippet"]["description"],
+      createdFromDropDown: 1,
       type: 4,
       url: $scope.youtubeVideos[videoIdx]["id"]["videoId"],
       temp_id: Date.now()
@@ -308,11 +310,14 @@ var pms = angular.module('qrms', ['ui.router'])
 .factory('restcli', ['$http', '$q', function($http, $q){
   return {
     getYoutubeVideos: function(){
-        var queryLink =  "https://json2jsonp.com/?url="+encodeURIComponent("https://www.googleapis.com/youtube/v3/search?key=" + config.youtubeApiKey + " &channelId=" + config.museoChanelId + "&part=snippet,id&order=date&maxResults=50")+"&callback=JSON_CALLBACK";
+        //var queryLink =  "https://json2jsonp.com/?url="+encodeURIComponent("https://www.googleapis.com/youtube/v3/search?key=AIzaSyDgzKrvkzEMLk96SNczfyKKnlp58UO9WKY&channelId=UCYmgafhGsL3zCP6H1eObajg&part=snippet,id&order=date&maxResults=50")+"&callback=JSON_CALLBACK";
+
+        var queryLink =  "https://json2jsonp.com/?url="+encodeURIComponent("https://www.googleapis.com/youtube/v3/search?key=AIzaSyDgzKrvkzEMLk96SNczfyKKnlp58UO9WKY&channelId=UCYmgafhGsL3zCP6H1eObajg&part=snippet,id&order=date&maxResults=50")+"&callback=JSON_CALLBACK";
         return $http.jsonp(queryLink);
       },
+      //           var queryLink = "https://json2jsonp.com/?url="+encodeURIComponent("http://resourcespace.tekniikanmuseo.fi/plugins/api_audio_search/index.php/?key=GpDVpyeWgjz_vSOWSmYWQfKWKmR5QKIRvHfvJlfaSI2e0PO40NpqXEbFe2tktiCnTatqpuo5zpNt9xBjYbExULC98NBpWWbSXw-Fkp9TP2UffogX3B018h--LMwbnkgB&format=mp3&link=true")+"&callback=JSON_CALLBACK";
       getAudioResources: function() {
-          var queryLink = "https://json2jsonp.com/?url="+encodeURIComponent("http://resourcespace.tekniikanmuseo.fi/plugins/api_audio_search/index.php/?key="+ config.resourseSpaceApiKey +"&format=mp3&link=true")+"&callback=JSON_CALLBACK";
+          var queryLink = "https://json2jsonp.com/?url="+encodeURIComponent("http://resourcespace.tekniikanmuseo.fi/plugins/api_audio_search/index.php/?key=GpDVpyeWgjz_vSOWSmYWQfKWKmR5QKIRvHfvJlfaSI2e0PO40NpqXEbFe2tktiCnTatqpuo5zpNt9xBjYbExULC98NBpWWbSXw-Fkp9TP2UffogX3B018h--LMwbnkgB&format=mp3&link=true")+"&callback=JSON_CALLBACK";
           return $http.jsonp(queryLink);
       },
   	  auth: function(username, password) {
