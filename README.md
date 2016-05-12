@@ -9,15 +9,28 @@ set supersecret to whatever string:
 
 
 ## Installation
-1.pull this repository<br />
-2.run npm install to install dependencies<br />
-3.run project command is : gulp<br />
+1.clone repo
+2.run npm install
+3.create new file: config.json.
+4.set a secret key and your database server is running path with the museum 
+``` 
+{
+"secret":"allOfUsAreOne",
+"DBPath": "mongodb://username:user@someKey.mongolab.com:someOtherKey/museo"
+}
+``` 
+5.from terminal > gulp to run application.
+
 ## Usage
+
+
+
 ###routes
 
 #### Auth
 
 POST  `localhost:8000/api/authenticate` with valid username and password from users collection.
+*if project is initialized user should be inserted manually to database
 
 HTTP respone 
  ```
@@ -27,6 +40,33 @@ HTTP respone
 }
 ```
 return Authorization token. required for all route besides GET `http://localhost:8000/api/exhibits/`
+
+####HTTP.GET <br />
+
+`http://localhost:8000/api/users/`
+
+return a list of users
+
+####HTTP.POST <br />
+
+`http://localhost:8000/api/users/`
+
+req:
+ ```
+{
+    "username":"asa",
+    "password":"paske"
+}
+ ```
+ res:
+  ```
+{
+  "message": "New User -Admin room!"
+}
+ ```
+ 
+
+saves a user to database
 
 ####HTTP.GET <br />
 
