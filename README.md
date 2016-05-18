@@ -9,10 +9,14 @@ set supersecret to whatever string:
 
 
 ## Installation
-1.clone repo
-2.run npm install
-3.create new file: config.json.
-4.set a secret key and your database server is running path with the museum 
+<ol>
+<li>clone repo</li>
+<li>run npm install</li>
+<li>create new file: config.json.</li>
+<li>set a secret key and your database server is running path with the museum</li>
+</ol>
+
+
 ``` 
 {
 "secret":"allOfUsAreOne",
