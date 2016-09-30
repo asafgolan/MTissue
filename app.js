@@ -11,6 +11,7 @@ var express = require('express'),
 //  console.log("Error While creating the Socket Connection");
 //});
 
+
 //var db;
 //if(process.env.ENV == 'Test')
 //db = mongoose.connect(config.TestDBPath);
@@ -34,7 +35,9 @@ app.use(passport.initialize());
 
 var storage = multer.diskStorage({
   destination: function(req, file, callback) {
-    callback(null, './static/uploads');
+    console.log("I HAVE FILE WAITING -->>>>>");
+    console.log(file);
+    callback(null, './uploads');
   },
   filename: function(req, file, callback) {
     callback(null, file.originalname);

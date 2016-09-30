@@ -52,7 +52,7 @@ var pms = angular.module('qrms', ['ui.router'])
       controller: 'ViewCtrl'
 
     });
-    
+
     $locationProvider.html5Mode(false);
 
 }])
@@ -65,7 +65,7 @@ var pms = angular.module('qrms', ['ui.router'])
   $rootScope.contentTypes = {1: "Only text", 2: "File", 3: "URL", 4: "Youtube"};
   $rootScope.loggedIn = false; // login flag
   $rootScope.currentUserName; // the user string? id or object could be in some other variable
-  
+
   console.log();
 
   $rootScope.auth = function(){
@@ -88,7 +88,7 @@ var pms = angular.module('qrms', ['ui.router'])
       $scope.authMessage = "Logged in as "+$scope.username;
       $rootScope.loggedIn = true;
       $rootScope.currentUserName = $scope.username;
-      $state.go("list");
+      $state.go("edit");
     }).error(function(data, status){
       $scope.authMessage = "Invalid credentials.";
     });
@@ -99,18 +99,18 @@ var pms = angular.module('qrms', ['ui.router'])
 
 //LIST ALL STUFFS
 .controller('ListCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
-  
+
   $rootScope.auth();
-  
+
   $scope.getExhibits = function(){
     restcli.getExhibits().success(function(data, status){
       console.log(data);
       $scope.exhibits = data;
     });
   }
-  
+
   $scope.getExhibits();
-  
+
   $scope.delete = function(id){
     restcli.deleteExhibit(id).success(function(data, status){
       $scope.getExhibits();
@@ -122,15 +122,76 @@ var pms = angular.module('qrms', ['ui.router'])
 
 //EDIT AND CREATE NEW
 .controller('EditCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
-  
+
   $rootScope.auth();
-  
-  $scope.exhibit;
+
+  $scope.imageArray =[];
+
+  $scope.file;
+
   $scope.statusMessage;
-  
+  console.log("IM HEREEEEEEE AND IM NNOT THERE");
+  var video = document.getElementById('video');
+
+
+// Get access to the camera!
+  if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    // Not adding `{ audio: true }` since we only want video now
+    navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+        video.src = window.URL.createObjectURL(stream);
+        video.play();
+    });
+  }
+
+  var canvas = document.getElementById('canvas');
+  var context = canvas.getContext('2d');
+  var video = document.getElementById('video');
+
+// Trigger photo take
+  document.getElementById("snap").addEventListener("click", function() {
+	   context.drawImage(video, 0, 0, 640, 480);
+
+     dataURL = canvas.toDataURL();
+     var blobBin = atob(dataURL.split(',')[1]);
+     var array = [];
+     for(var i = 0; i < blobBin.length; i++) {
+       array.push(blobBin.charCodeAt(i));
+     }
+     var file=new Blob([new Uint8Array(array)], {type: 'image/png'});
+     function blobToFile(theBlob, fileName){
+
+     //A Blob() is almost a File() - it's just missing the two properties below which we will add
+     theBlob.lastModifiedDate = new Date();
+     theBlob.name = fileName;
+     console.log(theBlob);
+     return theBlob;
+   }
+
+   file = blobToFile(file ,'my-image.png');
+     //var imageUrl = canvas.toDataURL("image/jpeg", 1.0);
+     //$scope.imageArray.push(image);
+     //console.log($scope.imageArray);
+     console.log("hey hoe -->");
+     //console.log($scope.imageArray);
+     var fd = new FormData();
+     //var newFile = $scope.imageArray[0];
+     fd.append("userPhoto", file);
+     restcli.upload(fd).then(uploadHandler, uploadHandler);
+
+   });
+
+  $scope.submit = function( ){
+    var fd = new FormData();
+    fd.append("userPhoto", $("#file")[0].files[0]);
+    //fd.append("userPhoto", $scope.file);
+    restcli.upload(fd).then(uploadHandler, uploadHandler);
+  }
+
+
+
   //making a new one or editing old?
   $scope.new = $state.params.id ? false : true;
-  
+
   if(!$scope.new){
     restcli.getExhibit($state.params.id).success(function(data, status){
       //set main object
@@ -142,7 +203,7 @@ var pms = angular.module('qrms', ['ui.router'])
   }else{
     $scope.exhibit = {title: "", content: []}; //create fresh main object
   }
-  
+
   //save and re-init
   $scope.saveExhibit = function(){
     $scope.statusMessage = "Saving...";
@@ -151,7 +212,7 @@ var pms = angular.module('qrms', ['ui.router'])
       $scope.exhibit = data;
     });
   }
-  
+
   //save new and redirect to edit view
   $scope.newExhibit = function(){
     $scope.statusMessage = "Saving...";
@@ -159,12 +220,13 @@ var pms = angular.module('qrms', ['ui.router'])
       $state.go("edit", {id:data._id});
     });
   }
-  
+
   //a container upload piece id that will be used in the following two functions
   $scope.uploadTarget;
-  
-  $scope.upload = function(id) {
-      $scope.uploadTarget = id;
+
+  $scope.upload = function(data) {
+      console.log("from upload function -->");
+      console.log(data);
       var fd = new FormData();
       var targetIdx = _.findLastIndex($scope.exhibit.content, {temp_id: $scope.uploadTarget});
       var newFile = $scope.exhibit.content[targetIdx].newFile;
@@ -177,29 +239,32 @@ var pms = angular.module('qrms', ['ui.router'])
       if (data["error"]) {
         alert(data["error"]);
       } else {
-        var targetIdx = _.findLastIndex($scope.exhibit.content, {temp_id: $scope.uploadTarget});
-        $scope.exhibit.content[targetIdx].url = "uploads/"+data[0].filename;
+        //var targetIdx = _.findLastIndex($scope.exhibit.content, {temp_id: $scope.uploadTarget});
+        //$scope.exhibit.content[targetIdx].url = "uploads/"+data[0].filename;
+        console.log("sucssess -->");
+        //console.log(data);
+        //console.log(status);
       }
 
   }
-  
+
   $scope.addPiece = function(){
     $scope.exhibit.content.push({language: "", description: "", type: 1, url: "", temp_id: Date.now()});
   }
-  
+
   $scope.deletePiece = function(id){
     var deleteIndex = _.findIndex($scope.exhibit.content, function(piece) { return piece.temp_id == id })
     $scope.exhibit.content.splice(deleteIndex, 1);
   }
-  
+
   $scope.audioResources;
   restcli.getAudioResources().success(function(data, status){
     console.log(data);
     $scope.audioResources = data;
   });
-  
-  
-     
+
+
+
   $scope.newAudioPiece = function(fileIdx){
     $scope.exhibit.content.push({
       language: "",
@@ -211,15 +276,15 @@ var pms = angular.module('qrms', ['ui.router'])
       temp_id: Date.now()
     });
   }
-  
+
   $scope.youtubeVideos = [];
 
   restcli.getYoutubeVideos().success(function(data, status){
     console.log(data);
     $scope.youtubeVideos = data.items;
-    
+
   });
-  
+
   $scope.newYoutubePiece = function(videoIdx){
     $scope.exhibit.content.push({
       language: "",
@@ -231,7 +296,7 @@ var pms = angular.module('qrms', ['ui.router'])
       temp_id: Date.now()
     });
   }
-  
+
   $scope.parseDescription = function(o){
     return o["Category"]+"/"+o["Original filename"];
   }
@@ -243,7 +308,7 @@ var pms = angular.module('qrms', ['ui.router'])
 
   $scope.exhibit;
   $scope.child;
-  
+
   $scope.fileTypes = {
     html : "link",
     php : "link",
@@ -255,15 +320,15 @@ var pms = angular.module('qrms', ['ui.router'])
     wav : "noiz",
     mp3 : "noiz"
   }
-  
+
   $scope.fileExtension = function( url ) {
       return url.split('.').pop().split(/\#|\?/)[0];
   }
-  
+
   restcli.getExhibit($state.params.id).success(function(data, status){
     $scope.exhibit = data;
     for(var piece in $scope.exhibit.content){
-      
+
       //create SRC attributes from urls on load
       $scope.exhibit.content[piece].src = $sce.trustAsResourceUrl($scope.exhibit.content[piece].url);
 
@@ -273,53 +338,43 @@ var pms = angular.module('qrms', ['ui.router'])
       if(typeof $scope.exhibit.content[piece].medium == "undefined"){
         $scope.exhibit.content[piece].medium = "link";
       }
-      
+
     }
     //spaghetti exception for the child view
     if($state.params.cid){
       $scope.child = _.where($scope.exhibit.content, {_id: $state.params.cid})[0];
     }
-    
+
     $timeout(function () {
       //defined in youtube.js
       loadYoutubePlayers();
     }, 0, false);
 
   });
-  
+
 
 }])
 
 //PRINT
 .controller('PrintCtrl', ['$scope', '$rootScope', '$state', 'restcli', function($scope, $rootScope, $state, restcli) {
-  
+
   $rootScope.auth();
 
   $scope.exhibit;
-  
+
   restcli.getExhibit($state.params.id).success(function(data, status){
     $scope.exhibit = data;
     /* global jQuery (comment for c9 IDE) */
     jQuery('#qrcode').qrcode({width: 500, height:500, text: "http://museoapi-vwnb.c9users.io/#/view/"+$state.params.id});
   });
-  
+
 
 }])
 
 //factory with API helpers
 .factory('restcli', ['$http', '$q', function($http, $q){
   return {
-    getYoutubeVideos: function(){
-        //var queryLink =  "https://json2jsonp.com/?url="+encodeURIComponent("https://www.googleapis.com/youtube/v3/search?key=AIzaSyDgzKrvkzEMLk96SNczfyKKnlp58UO9WKY&channelId=UCYmgafhGsL3zCP6H1eObajg&part=snippet,id&order=date&maxResults=50")+"&callback=JSON_CALLBACK";
-
-        var queryLink =  "https://json2jsonp.com/?url="+encodeURIComponent("https://www.googleapis.com/youtube/v3/search?key=AIzaSyDgzKrvkzEMLk96SNczfyKKnlp58UO9WKY&channelId=UCYmgafhGsL3zCP6H1eObajg&part=snippet,id&order=date&maxResults=50")+"&callback=JSON_CALLBACK";
-        return $http.jsonp(queryLink);
-      },
-      //           var queryLink = "https://json2jsonp.com/?url="+encodeURIComponent("http://resourcespace.tekniikanmuseo.fi/plugins/api_audio_search/index.php/?key=GpDVpyeWgjz_vSOWSmYWQfKWKmR5QKIRvHfvJlfaSI2e0PO40NpqXEbFe2tktiCnTatqpuo5zpNt9xBjYbExULC98NBpWWbSXw-Fkp9TP2UffogX3B018h--LMwbnkgB&format=mp3&link=true")+"&callback=JSON_CALLBACK";
-      getAudioResources: function() {
-          var queryLink = "https://json2jsonp.com/?url="+encodeURIComponent("http://resourcespace.tekniikanmuseo.fi/plugins/api_audio_search/index.php/?key=GpDVpyeWgjz_vSOWSmYWQfKWKmR5QKIRvHfvJlfaSI2e0PO40NpqXEbFe2tktiCnTatqpuo5zpNt9xBjYbExULC98NBpWWbSXw-Fkp9TP2UffogX3B018h--LMwbnkgB&format=mp3&link=true")+"&callback=JSON_CALLBACK";
-          return $http.jsonp(queryLink);
-      },
+  
   	  auth: function(username, password) {
   		    return $http.post('/api/authenticate', {username: username, password: password});
   	  },
@@ -342,7 +397,7 @@ var pms = angular.module('qrms', ['ui.router'])
   	      return $http.delete('/api/exhibits/'+id);
   	  },
   	  upload: function(data){
-
+          console.log("LINE 388 -->"  + data);
             var deferred = $q.defer();
             var getProgressListener = function(deferred) {
                 return function(event) {
@@ -361,6 +416,7 @@ var pms = angular.module('qrms', ['ui.router'])
                 contentType: false,
                 processData: false,
                 success: function(response, textStatus, jqXHR) {
+                    console.log(response);
                     deferred.resolve(response);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
