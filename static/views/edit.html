@@ -6,13 +6,50 @@
   <canvas id="canvas" width="320" height="240"></canvas>
 
   <div id="div"></div>
-  <diV>
+  ========================================================================================================================================================
+  <div>
     <h1>input file manually</h1>
 
       <input type="file" id="file" name = "file"/>
-       <button ng-click="submit()">upload me</button>
-
+       <button id="submit">upload me</button>
+       <img id="image" />
+       <p>------------------------------------------</p>
+       <button id="cropModel"> crop model </button>
   </div>
+
+
+  <script>
+
+
+  document.getElementById("file").onchange = function () {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+          // get loaded data and render thumbnail.
+
+          document.getElementById("image").src = e.target.result;
+          $('#image').cropper({
+
+            zoomable:false,
+            crop: function(e) {
+              // Output the result data for cropping image.
+              console.log(e.x);
+              console.log(e.y);
+              console.log(e.width);
+              console.log(e.height);
+              console.log(e.rotate);
+              console.log(e.scaleX);
+              console.log(e.scaleY);
+            }
+          });
+      };
+
+
+      // read the image file as a data URL.
+      reader.readAsDataURL(this.files[0]);
+      };
+
+
+  </script>
 
 
     <!--<label>Main title</label><input ng-model="exhibit.title" type="text">

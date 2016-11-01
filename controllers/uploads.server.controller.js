@@ -5,7 +5,7 @@ var PythonShell = require('python-shell');
 
 var uploadController = function(upload){
 
-
+  var stockObject;
   var get = function(req,res){
       res.json({error: "cant get api uploadsssss"});
   }
@@ -24,14 +24,16 @@ var uploadController = function(upload){
       //console.log(myFile);
 
       console.log("LOGGING FILES");
-      console.log(req.files[0].path);
-      res.json(req.files);
+      //console.log(req.files[0].path);
+      //res.json(req.files);
 
       var pyshell = new PythonShell('./pattern.py');
       pyshell.send( './' + req.files[0].path);
       pyshell.on('message', function (message) {
         // received a message sent from the Python script (a simple "print" statement)
-        console.log(message);
+        stockObject = eval('(' + message + ')');
+        res.json(stockObject);
+        //console.log(stockObject[0].title);
       });
 
       pyshell.end(function (err) {

@@ -9,13 +9,13 @@ import sys
 from matplotlib import pyplot as plt
 
 paths =[]
-print "the name of uploaded file"
+#print "the name of uploaded file"
 for line in sys.stdin:
-    print 'PATH -->'
-    print line
+    #print 'PATH -->'
+    #print line
     paths.append(line)
 
-print paths[0]
+#print paths[0]
 
 
 
@@ -27,16 +27,56 @@ lambi8counter = 0
 #img1 = cv2.imread('jus1.png',0) # trainImage
 #img2 = cv2.imread('real.png',0) # trainImage
 
+'''
+    1.check if a model exsits
+    2.if it exsits set path to model path
+    3.add model to productsDictionariesArray
+    4.script will iterate through exsiting models
+    5.in view page for all products in db that not been counted notify user ... :-)
+'''
+
+'''
+productsDictionariesArray = []
+
+import os
+for filename in os.listdir('/Users/asafgolan/Documents/MT-API/static/assets/imgs/models'):
+     produnctName = filename[:-4]
+
+     productDict = {'title':produnctName, 'path' : '/Users/asafgolan/Documents/MT-API/static/assets/imgs/models'  + filename, 'count':0 }
+     print produnctDict['title']
+
+     productDict = {}
+     productDict['title'] = filename
+     productDict['path']  = '/Users/asafgolan/Documents/MT-API/static/assets/imgs/models'  + filename
+     productDict['count'] = 0
+     print 'nana na na nanana na hey hey hey maccabi ' + productDict
+     productsDictionariesArray.append(productDict);
+
+     dict = {'title': produnctName, 'count': 0, 'path': '/Users/asafgolan/Documents/MT-API/static/assets/imgs/models/'  + filename}
+
+     #print "dict['title']: ", dict['title']
+     #print "dict['path']: ", dict['path']
+     #print dict
+     productsDictionariesArray.append(dict);
+ '''
+
+
 #queryImageArray =['./assets/imgs/lambi12pack.png','./assets/imgs/lambi8pack.png']
-productsDictionariesArray = [{'title': 'lambi12pack' , 'path':'/Users/asafgolan/Documents/pattern/assets/imgs/lambi12pack.png' , 'count': 0 },{'title': 'lambi8pack' , 'path':'/Users/asafgolan/Documents/pattern/assets/imgs/lambi8pack.png', 'count':0 }]
+productsDictionariesArray = [{'title': 'lambi12pack' , 'path':'/Users/asafgolan/Documents/MT-API/static/assets/imgs/models/lambi12pack.png' , 'count': 0 },{'title': 'lambi8pack' , 'path':'/Users/asafgolan/Documents/pattern/assets/imgs/lambi8pack.png', 'count':0 }]
+#productsDictionariesArray = [{'title': 'lambi12pack' , 'path':'' , 'count': 0 },{'title': 'lambi8pack' , 'path':'', 'count':0 }]
 
-
+'''
+for product in productsDictionariesArray :
+    for filename in os.listdir('/Users/asafgolan/Documents/MT-API/static/assets/imgs/models'):
+        if product['title'] == filename[:-4]
+            product['path'] = '/Users/asafgolan/Documents/MT-API/static/assets/imgs/models/' + filename
+'''
 for product in productsDictionariesArray :
 
-    print 'Searching product ..'
-    print product['title']
-    print 'In path ...'
-    print product['path']
+    #print 'Searching product ..'
+
+    #print 'In path ...'
+    #print product['path']
     imagePath = product['path']
 
 
@@ -46,19 +86,22 @@ for product in productsDictionariesArray :
     try:
         img2
     except NameError:
-        print 'final path'
-        url = '/Users/asafgolan/Documents/MT-api/uploads/k-city.jpg'
+        #print 'final path'
+        #url = '/Users/asafgolan/Documents/MT-api/uploads/k-city.jpg'
 
-        url =  paths[0]
+        url =  paths[0].strip()
         #url =  repr(url)
         #url2 ='./ ' + 'uploads/k-city.jpg'
 
-        print url
+        #print url
+        #print './uploads/k-city.jpg'
+        #print "PATHS ARE EQUAL ...."
+        #print url == './uploads/k-city.jpg'
         #print type(url)
-
-        img2 = cv2.imread('./uploads/k-city.jpg',0)
+        img2 = cv2.imread(url,0)
+        #img2 = cv2.imread('./uploads/k-city.jpg',0)
         #img2 = cv2.imread('/Users/asafgolan/Documents/pattern/assets/imgs/k-city.jpg',0)
-        print 'lalalalalal --> ...'
+        #print 'lalalalalal --> ...'
         #print fileName
         #print './' + fileName
         #img2 = cv2.imread('./' + fileName,0)
@@ -99,7 +142,7 @@ for product in productsDictionariesArray :
                 good.append(m)
 
         if len(good)>MIN_MATCH_COUNT:
-            print "good -->" , len(good)
+            #print "good -->" , len(good)
             #lambi12Counter = lambi12Counter + 1
             product['count'] = product['count'] + 1
             src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
@@ -134,13 +177,13 @@ for product in productsDictionariesArray :
 
         #crop_img = img3[92:224, 267:570]
 
-        #plt.imshow(img3, 'gray'),plt.show()
+        plt.imshow(img3, 'gray'),plt.show()
         plt.imshow(img2, 'gray'),plt.show()
         #print "============================"
 
 
 
-print 'final product count ...'
+#print 'final product count ...'
 #
 print productsDictionariesArray
 raise SystemExit

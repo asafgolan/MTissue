@@ -11,8 +11,10 @@
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.14.2",
+    "cropper": "^2.3.4",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
+    "fluent-ffmpeg": "^2.1.0",
     "google-oauth": "0.0.2",
     "gulp": "^3.9.0",
     "gulp-mocha": "^2.2.0",
@@ -26,7 +28,8 @@
     "python-shell": "^0.4.0",
     "redis": "^2.5.2",
     "should": "^8.2.1",
-    "sinon": "^1.17.3"
+    "sinon": "^1.17.3",
+    "watson-developer-cloud": "^2.6.2"
   },
   "devDependencies": {
     "gulp-env": "^0.4.0",

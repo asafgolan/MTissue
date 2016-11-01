@@ -62,6 +62,8 @@ var pms = angular.module('qrms', ['ui.router'])
 
   // initialize variables that are useful everywhere
   $scope = $rootScope; // irrelevant magic
+  $rootScope.products;
+  $rootScope.countDataObj ;
   $rootScope.contentTypes = {1: "Only text", 2: "File", 3: "URL", 4: "Youtube"};
   $rootScope.loggedIn = false; // login flag
   $rootScope.currentUserName; // the user string? id or object could be in some other variable
@@ -180,12 +182,49 @@ var pms = angular.module('qrms', ['ui.router'])
 
    });
 
-  $scope.submit = function( ){
+  document.getElementById("submit").addEventListener("click", function() {
+    console.log("submiting -------<<<<<");
     var fd = new FormData();
+
     fd.append("userPhoto", $("#file")[0].files[0]);
     //fd.append("userPhoto", $scope.file);
     restcli.upload(fd).then(uploadHandler, uploadHandler);
-  }
+  });
+
+  document.getElementById("cropModel").addEventListener("click", function() {
+    console.log('need to crop model ... ');
+    $('#image').cropper('getCroppedCanvas').toBlob(function (blob) {
+
+
+      //var file=new Blob([new Uint8Array(array)], {type: 'image/png'});
+      function blobToFile(theBlob, fileName){
+          //A Blob() is almost a File() - it's just missing the two properties below which we will add
+          theBlob.lastModifiedDate = new Date();
+          theBlob.name = fileName;
+          console.log(theBlob);
+          return theBlob;
+        }
+        url = URL.createObjectURL(blob);
+        file = blobToFile(blob ,'my-image.png');
+        var fd = new FormData();
+        //var newFile = $scope.imageArray[0];
+        fd.append("userPhoto", file);
+        restcli.uploadNWatson(fd).then(function(data, status) {
+
+            if (data["error"]) {
+              alert(data["error"]);
+            } else {
+              console.log("FILE UPLOADED SUCCSESFULLY ...");
+
+            }
+
+        })
+        //url send to watson retrive a product;
+        //set as model if product retrive
+        //upload with name model + productName;
+        console.log(url);
+      });
+  });
 
 
 
@@ -242,6 +281,17 @@ var pms = angular.module('qrms', ['ui.router'])
         //var targetIdx = _.findLastIndex($scope.exhibit.content, {temp_id: $scope.uploadTarget});
         //$scope.exhibit.content[targetIdx].url = "uploads/"+data[0].filename;
         console.log("sucssess -->");
+        console.log(data);
+        $rootScope.countDataObj = data;
+        if($rootScope.countDataObj){
+          restcli.getProducts().success(function(data, status){
+            console.log(data);
+            $rootScope.products = data;
+          })
+        }
+
+        
+        $state.go("single");
         //console.log(data);
         //console.log(status);
       }
@@ -258,10 +308,10 @@ var pms = angular.module('qrms', ['ui.router'])
   }
 
   $scope.audioResources;
-  restcli.getAudioResources().success(function(data, status){
+/**  restcli.getAudioResources().success(function(data, status){
     console.log(data);
     $scope.audioResources = data;
-  });
+  });**/
 
 
 
@@ -279,11 +329,11 @@ var pms = angular.module('qrms', ['ui.router'])
 
   $scope.youtubeVideos = [];
 
-  restcli.getYoutubeVideos().success(function(data, status){
+  /**restcli.getYoutubeVideos().success(function(data, status){
     console.log(data);
     $scope.youtubeVideos = data.items;
 
-  });
+  });**/
 
   $scope.newYoutubePiece = function(videoIdx){
     $scope.exhibit.content.push({
@@ -374,16 +424,19 @@ var pms = angular.module('qrms', ['ui.router'])
 //factory with API helpers
 .factory('restcli', ['$http', '$q', function($http, $q){
   return {
-  
+
   	  auth: function(username, password) {
   		    return $http.post('/api/authenticate', {username: username, password: password});
   	  },
       getUsers: function() {
   		    return $http.get('/api/users');
   	  },
-  	  getExhibits: function(){
-  	      return $http.get('/api/exhibits')
+      getProducts: function() {
+  		    return $http.get('/api/products');
   	  },
+  	  /**getExhibits: function(){
+  	      return $http.get('/api/exhibits')
+  	  },**/
   	  getExhibit: function(id){
   	      return $http.get('/api/exhibits/'+id)
   	  },
@@ -438,7 +491,50 @@ var pms = angular.module('qrms', ['ui.router'])
             });
             return deferred.promise;
 
-  	  }
+  	  },
+      uploadNWatson: function(data){
+          console.log("LINE 388 -->"  + data);
+            var deferred = $q.defer();
+            var getProgressListener = function(deferred) {
+                return function(event) {
+                    //this can be used to show an upload bar
+                    var progpercent = ((100 * (event.loaded / event.total)).toFixed()) + "%";
+                };
+            };
+
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/uploads_n_query_watson',
+                data: data,
+                cache: false,
+                // Force this to be read from FormData
+                contentType: false,
+                processData: false,
+                success: function(response, textStatus, jqXHR) {
+                    console.log(response);
+                    deferred.resolve(response);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    deferred.reject(errorThrown);
+                },
+                xhr: function() {
+                    var myXhr = $.ajaxSettings.xhr();
+                    if (myXhr.upload) {
+                        myXhr.upload.addEventListener(
+                            'progress', getProgressListener(deferred), false);
+                    } else {
+                        console.log('Upload progress is not supported.');
+                    }
+                    return myXhr;
+                },
+                beforeSend: function(xhr){
+                  xhr.setRequestHeader("Authorization", $http.defaults.headers.common.Authorization);
+                }
+            });
+            return deferred.promise;
+
+      }
     }
 
 }])
