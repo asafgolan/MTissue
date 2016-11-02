@@ -1,22 +1,26 @@
-<div class="wrap boxed edit-view">
+<div style="margin:1.5em;">
+<h1 ng-click="doSomething($event)" >take your own image</h1>
+
+  <div ng-hide="myValue">
   <div>
     <video id="video" width="320" height="240" autoplay></video><br>
     <button id="snap">Snap Photo</button>
   </div>
   <canvas id="canvas" width="320" height="240"></canvas>
-
-  <div id="div"></div>
+  </div>
+</div>
   ========================================================================================================================================================
-  <div>
-    <h1>input file manually</h1>
-
+<div style="margin:1.5em;">
+<h1 ng-click="doSomething2($event)">input file manually</h1>
+  <div ng-hide="myValue2">
       <input type="file" id="file" name = "file"/>
        <button id="submit">upload me</button>
-       <img id="image" />
-       <p>------------------------------------------</p>
        <button id="cropModel"> crop model </button>
+       <div class="holder">
+         <img id="image" />
+       </div>
   </div>
-
+</div>
 
   <script>
 

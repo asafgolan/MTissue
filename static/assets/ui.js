@@ -130,6 +130,30 @@ var pms = angular.module('qrms', ['ui.router'])
   $scope.imageArray =[];
 
   $scope.file;
+  $scope.myValue = true;
+  $scope.myValue2 = true;
+
+
+  $scope.doSomething = function(ev) {
+    var element = ev.srcElement ? ev.srcElement : ev.target;
+    console.log(element, angular.element(element))
+    if(!$scope.myValue){
+      $scope.myValue = true;
+    }else{
+      $scope.myValue = false;
+    }
+  }
+
+  $scope.doSomething2= function(ev) {
+    var element = ev.srcElement ? ev.srcElement : ev.target;
+    console.log(element, angular.element(element))
+    if(!$scope.myValue2){
+      $scope.myValue2 = true;
+    }else{
+      $scope.myValue2 = false;
+    }
+  }
+
 
   $scope.statusMessage;
   console.log("IM HEREEEEEEE AND IM NNOT THERE");
@@ -280,17 +304,30 @@ var pms = angular.module('qrms', ['ui.router'])
       } else {
         //var targetIdx = _.findLastIndex($scope.exhibit.content, {temp_id: $scope.uploadTarget});
         //$scope.exhibit.content[targetIdx].url = "uploads/"+data[0].filename;
-        console.log("sucssess -->");
-        console.log(data);
         $rootScope.countDataObj = data;
         if($rootScope.countDataObj){
           restcli.getProducts().success(function(data, status){
-            console.log(data);
             $rootScope.products = data;
+            for(i = 0; i < $rootScope.countDataObj.length ; i++){
+              //console.log("sucssess -->");
+              //console.log($rootScope.countDataObj[i]);
+              //console.log($rootScope.products);
+                for( j=0 ; j < $rootScope.products.length ; j++){
+
+                  if($rootScope.products[j].nick == $rootScope.countDataObj[i].title){
+                    //alert("mofo --- mofo -- mofo ");
+                     console.log($rootScope.products[j]);
+                     $rootScope.countDataObj[i]["countedAsOne"] = $rootScope.products[j].unitsCountedAsOne;
+                     $rootScope.countDataObj[i]["code"] = $rootScope.products[j].code;
+                    //console.log($rootScope.countDataObj[i]);
+                  }
+                }
+              }
           })
+
         }
 
-        
+
         $state.go("single");
         //console.log(data);
         //console.log(status);

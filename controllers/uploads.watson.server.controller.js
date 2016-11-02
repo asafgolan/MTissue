@@ -3,7 +3,7 @@
 console.log("watson controller");
 var watson = require('watson-developer-cloud');
 var visual_recognition = watson.visual_recognition({
-    api_key: ,
+    api_key: '17372caec1a660bb603ccf5ebc4cd5f34f2df587',
 
     version: 'v3',
     version_date: '2016-05-20'

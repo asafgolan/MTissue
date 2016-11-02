@@ -1,13 +1,14 @@
 <div class="wrap boxed view-view">
 
     <img ng-if="child.language" class="flag" ng-src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.0.0/flags/1x1/{{child.language | lowercase}}.svg">
-    {{products}}
     <div ng-repeat="obj in countDataObj" class="list-item">
 ========================================================================================================================================================
         <span style="float:left">
 
-            <h3>{{obj.title}}</h3>
-            <p> the number of unit detected: {{ obj.count }}</p>
+            <h3>{{obj.title}} </h3>
+            <p> EAN code: {{obj.code}}</p>
+            <p> number of units detected: {{ obj.count }}</p>
+            <p> number of units to assemble a module: {{obj.countedAsOne}}</p>
 
               <!--<a ui-sref="view({id: exhibit._id})">View</a>
              - <a ng-repeat="piece in exhibit.content" ui-sref="single({id: exhibit._id, cid: piece._id})"><img class="icon" ng-if="piece.language" ng-src="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/2.0.0/flags/1x1/{{piece.language | lowercase}}.svg"></a>|
