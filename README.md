@@ -32,8 +32,9 @@ set watson api key to whatever relevant credentials:
 
 ## Usage
 
+##go to localhost:8000 in the browser .... and follow ur intuition ....
 
-
+##API
 ###routes
 
 #### Auth
